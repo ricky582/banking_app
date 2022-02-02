@@ -34,7 +34,7 @@ public class App extends Jooby {
         DataSource ds = require(DataSource.class);
         Logger log = getLog();
 
-        mvc(new ExampleController(ds,log));
+        mvc(new Controller(ds,log));
 
         /*
         Finally we register our application lifecycle methods
@@ -59,10 +59,24 @@ public class App extends Jooby {
         DataSource ds = require(DataSource.class);
         // Open Connection to DB
         try (Connection connection = ds.getConnection()) {
-            //
+            //Populate The Database
             Statement stmt = connection.createStatement();
-            stmt.executeUpdate("CREATE TABLE Example (Key varchar(255),Value varchar(255))");
-            stmt.executeUpdate("INSERT INTO Example " + "VALUES ('WelcomeMessage', 'Welcome to A Bank')");
+            Object[][] dataSet = new Object[][]{
+                    {"Rachel", 50.00},
+                    {"Monica", 100.00},
+                    {"Joey", 23.90},
+                    {"Pheobe", 76.00},
+                    {"Chandler", 3.00},
+                    {"Ross", 54.32},
+            };
+            //stmt.executeUpdate("CREATE TABLE Example (Key varchar(255),Value varchar(255))");
+            //stmt.executeUpdate("INSERT INTO Example " + "VALUES ('WelcomeMessage', 'Welcome to A Bank')");
+
+            stmt.executeUpdate("CREATE TABLE AccountDataset (Name varchar(255), Balance float)");
+            for(int i = 0; i < dataSet.length; i++)
+            {
+                stmt.executeUpdate("INSERT INTO AccountDataset " + "VALUES ('"+ dataSet[i][0] +"', '"+ dataSet[i][1] +"')");
+            }
         } catch (SQLException e) {
             log.error("Database Creation Error",e);
         }
@@ -76,3 +90,4 @@ public class App extends Jooby {
     }
 
 }
+
