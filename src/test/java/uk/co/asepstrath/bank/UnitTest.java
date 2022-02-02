@@ -1,6 +1,12 @@
 package uk.co.asepstrath.bank;
 
 import org.junit.jupiter.api.*;
+import org.slf4j.Logger;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -10,6 +16,8 @@ public class UnitTest {
     Example can be found in example/UnitTest.java
      */
 
+
+    //Account Tests
     @Test
     public void createAccount()
     {
@@ -64,6 +72,4 @@ public class UnitTest {
         a.deposit(17.56);
         Assertions.assertEquals(23.01, a.getBalance());
     }
-
-
 }
