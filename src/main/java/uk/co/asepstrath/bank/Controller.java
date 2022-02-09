@@ -44,7 +44,7 @@ public class Controller {
         try (Connection connection = dataSource.getConnection()) {
             Statement statement = connection.createStatement();
 
-            for(int i = 0; i <= 1; i++) {
+            for(int i = 0; i <= 5; i++) {
                 ResultSet set = statement.executeQuery("SELECT * FROM AccountDataset Where Name = '" + accountOwners.get(i) + "'");
                 set.next();
                 System.out.println(set.getString("Name"));

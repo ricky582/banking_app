@@ -24,7 +24,7 @@ public class IntegrationTest {
                 .build();
 
         try (Response rsp = client.newCall(req).execute()) {
-            assertEquals(76.0, rsp.body().string());
+            assertEquals("[Rachel 50.0, Monica 100.0, Phoebe 76.0, Joey 23.9, Chandler 3.0, Ross 54.32]", rsp.body().string());
             assertEquals(StatusCode.OK.value(), rsp.code());
         }
     }

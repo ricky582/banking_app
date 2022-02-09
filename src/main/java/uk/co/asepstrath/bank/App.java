@@ -65,14 +65,14 @@ public class App extends Jooby {
             Object[][] dataSet = new Object[][]{
                     {"Rachel", 50.00},
                     {"Monica", 100.00},
-                    {"Pheobe", 76.00},
+                    {"Phoebe", 76.00},
                     {"Joey", 23.90},
                     {"Chandler", 3.00},
                     {"Ross", 54.32},
             };
             stmt.executeUpdate("CREATE TABLE AccountDataset (Name varchar(255), Balance float)");
 
-            for(int i = 0; i < dataSet.length; i++) {
+            for(int i = 0; i <= 5; i++) {
                 stmt.executeUpdate("INSERT INTO AccountDataset " + "VALUES ('"+ dataSet[i][0] +"', '"+ dataSet[i][1] +"')");
             }
         } catch (SQLException e) {

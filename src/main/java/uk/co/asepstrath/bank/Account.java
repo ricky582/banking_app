@@ -13,7 +13,7 @@ public class Account {
     @Override
     public String toString()
     {
-        return String.valueOf(bal);
+        return String.valueOf(name + " " + getBalance());
     }
 
 
