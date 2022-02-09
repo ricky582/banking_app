@@ -1,6 +1,5 @@
 package uk.co.asepstrath.bank;
 
-import uk.co.asepstrath.bank.example.ExampleController;
 import io.jooby.Jooby;
 import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;

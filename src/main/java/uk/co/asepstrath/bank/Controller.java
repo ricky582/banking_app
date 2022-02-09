@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+//Path = IP/argument, i.e("localhost:8080/accounts)
 @Path("/accounts")
 public class Controller {
 
@@ -30,7 +31,7 @@ public class Controller {
         This request makes a call to the passed in data source (The Database) which has been set up in App.java
      */
 
-    @GET
+    @GET //@path + any extra, in this case since no argument with @get, just at @path
     public ArrayList displayAccounts() {
         ArrayList<Account> accounts = new ArrayList<>();
         ArrayList<String> accountOwners = new ArrayList<>();
