@@ -1,17 +1,31 @@
 package uk.co.asepstrath.bank;
 
+import uk.co.asepstrath.bank.App;
 import io.jooby.JoobyTest;
-import org.slf4j.Logger;
+import io.jooby.StatusCode;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import org.junit.jupiter.api.Test;
 
-import javax.sql.DataSource;
+import java.io.IOException;
 
-import static io.jooby.KoobyKt.require;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @JoobyTest(App.class)
 public class IntegrationTest {
-    /*
-    Integration tests should be here
-    Example can be found in example/IntegrationTest.java
-     */
+
+    static OkHttpClient client = new OkHttpClient();
+
+    @Test
+    public void shouldDisplayValue(int serverPort) throws IOException {
+        Request req = new Request.Builder()
+                .url("http://localhost:" + serverPort + "/accounts")
+                .build();
+
+        try (Response rsp = client.newCall(req).execute()) {
+            assertEquals(76.0, rsp.body().string());
+            assertEquals(StatusCode.OK.value(), rsp.code());
+        }
+    }
 }

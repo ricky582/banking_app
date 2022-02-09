@@ -1,9 +1,7 @@
 package uk.co.asepstrath.bank;
-import io.jooby.ModelAndView;
 import io.jooby.StatusCode;
 import io.jooby.annotations.*;
 import io.jooby.exception.StatusCodeException;
-import kong.unirest.Unirest;
 import org.slf4j.Logger;
 
 import javax.sql.DataSource;
@@ -11,67 +9,54 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.ArrayList;
 
-/*
-    Example Controller is a Controller from the MVC paradigm.
-    The @Path Annotation will tell Jooby what /path this Controller can respond to,
-    in this case the controller will respond to requests from <host>/example
- */
-@Path("/page")
+@Path("/accounts")
 public class Controller {
 
     private final DataSource dataSource;
     private final Logger logger;
 
     /*
-    This constructor can take in any dependencies the controller may need to respond to a request
+        This constructor can take in any dependencies the controller may need to respond to a request
      */
+
     public Controller(DataSource ds, Logger log) {
         dataSource = ds;
         logger = log;
     }
 
     /*
-    This request makes a call to the passed in data source (The Database) which has been set up in App.java
+        This request makes a call to the passed in data source (The Database) which has been set up in App.java
      */
+
     @GET
-    public String welcomeFromDB() {
-        String welcomeMessageKey = "Pheobe";
-        // Create a connection
+    public ArrayList displayAccounts() {
+        ArrayList<Account> accounts = new ArrayList<>();
+        ArrayList<String> accountOwners = new ArrayList<>();
+        accountOwners.add("Rachel");
+        accountOwners.add("Monica");
+        accountOwners.add("Phoebe");
+        accountOwners.add("Joey");
+        accountOwners.add("Chandler");
+        accountOwners.add("Ross");
+
         try (Connection connection = dataSource.getConnection()) {
-            // Create Statement (batch of SQL Commands)
             Statement statement = connection.createStatement();
-            // Perform SQL Query
-            ResultSet set = statement.executeQuery("SELECT * FROM AccountDataset Where Name = '"+welcomeMessageKey+"'");
-            // Read First Result
-            set.next();
-            // Extract value from Result
-            Account newAccount = new Account(set.getFloat("Balance"));
-            // Return value
-            return newAccount.toString();
+
+            for(int i = 0; i <= 1; i++) {
+                ResultSet set = statement.executeQuery("SELECT * FROM AccountDataset Where Name = '" + accountOwners.get(i) + "'");
+                set.next();
+                System.out.println(set.getString("Name"));
+                System.out.println(set.getFloat("Balance"));
+                Account newAccount = new Account(set.getString("Name"), set.getFloat("Balance"));
+                accounts.add(newAccount);
+            }
+
+            return accounts;
         } catch (SQLException e) {
-            // If something does go wrong this will log the stack trace
-            logger.error("Database Error Occurred",e);
-            // And return a HTTP 500 error to the requester
+            logger.error("Database Error Occurred", e);
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Database Error Occurred");
         }
     }
-
-    /*
-    The dice endpoint displays two features of the Jooby framework, Parameters and Templates
-
-    You can see that this function takes in a String name, the annotation @QueryParam tells the framework that
-    the value of name should come from the URL Query String (<host>/example/dice?name=<value>)
-
-    The function then uses this value and others to create a Map of values to be injected into a template.
-    The ModelAndView constructor takes a template name and the model.
-    The Template name is the name of the file containing the template, this name is relative to the folder src/main/resources/views
-
-    We have set the Jooby framework up to use the Handlebars templating system which you can read more on here:
-    https://handlebarsjs.com/guide/
-     */
-
 }

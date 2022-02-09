@@ -48,9 +48,10 @@ public class App extends Jooby {
     }
 
     /*
-    This function will be called when the application starts up,
-    it should be used to ensure that the DB is properly setup
+        This function will be called when the application starts up,
+        it should be used to ensure that the DB is properly setup
      */
+
     public void onStart() {
         Logger log = getLog();
         log.info("Starting Up...");
@@ -64,30 +65,26 @@ public class App extends Jooby {
             Object[][] dataSet = new Object[][]{
                     {"Rachel", 50.00},
                     {"Monica", 100.00},
-                    {"Joey", 23.90},
                     {"Pheobe", 76.00},
+                    {"Joey", 23.90},
                     {"Chandler", 3.00},
                     {"Ross", 54.32},
             };
-            //stmt.executeUpdate("CREATE TABLE Example (Key varchar(255),Value varchar(255))");
-            //stmt.executeUpdate("INSERT INTO Example " + "VALUES ('WelcomeMessage', 'Welcome to A Bank')");
-
             stmt.executeUpdate("CREATE TABLE AccountDataset (Name varchar(255), Balance float)");
-            for(int i = 0; i < dataSet.length; i++)
-            {
+
+            for(int i = 0; i < dataSet.length; i++) {
                 stmt.executeUpdate("INSERT INTO AccountDataset " + "VALUES ('"+ dataSet[i][0] +"', '"+ dataSet[i][1] +"')");
             }
         } catch (SQLException e) {
-            log.error("Database Creation Error",e);
+            log.error("Database Creation Error", e);
         }
     }
 
     /*
-    This function will be called when the application shuts down
+        This function will be called when the application shuts down
      */
     public void onStop() {
         System.out.println("Shutting Down...");
     }
 
 }
-

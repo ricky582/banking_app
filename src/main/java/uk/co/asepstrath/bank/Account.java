@@ -2,9 +2,11 @@ package uk.co.asepstrath.bank;
 
 public class Account {
 
+    private String name;
     private double bal;
 
-    public Account(double amount) {
+    public Account(String n, double amount) {
+        name = n;
         bal = amount;
     }
 
@@ -34,6 +36,10 @@ public class Account {
         return bal;
 
         //Doing Math.round(bal*100)/100 would return 1dp, and just returning bal had some funky math (double math not accurate)
+    }
+
+    public String getName() {
+        return name;
     }
 
 }

@@ -21,14 +21,14 @@ public class UnitTest {
     @Test
     public void createAccount()
     {
-        Account a = new Account(0);
+        Account a = new Account("a", 0);
         Assertions.assertTrue(a.getBalance() == 0);
     }
 
     @Test
     public void addFunds()
     {
-        Account a = new Account(20);
+        Account a = new Account("a",20);
         a.deposit(50);
         Assertions.assertEquals(70, a.getBalance());
     }
@@ -36,7 +36,7 @@ public class UnitTest {
     @Test
     public void spendingSpree()
     {
-        Account a = new Account(40);
+        Account a = new Account("a",40);
         a.withdraw(20);
         Assertions.assertEquals(20,a.getBalance());
     }
@@ -44,14 +44,14 @@ public class UnitTest {
     @Test
     public void noOverdraft()
     {
-        Account a = new Account(30);
+        Account a = new Account("a",30);
         Assertions.assertThrows(ArithmeticException.class,() -> a.withdraw(100));
     }
 
     @Test
     public void superSaving()
     {
-        Account a = new Account(20);
+        Account a = new Account("a",20);
         for(int i = 0; i < 5; i++)
         {
             a.deposit(10);
@@ -68,7 +68,7 @@ public class UnitTest {
     @Test
     public void takingCareOfPennies()
     {
-        Account a = new Account(5.45);
+        Account a = new Account("a",5.45);
         a.deposit(17.56);
         Assertions.assertEquals(23.01, a.getBalance());
     }
