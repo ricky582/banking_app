@@ -1,8 +1,10 @@
 package uk.co.asepstrath.bank;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jooby.StatusCode;
 import io.jooby.annotations.*;
 import io.jooby.exception.StatusCodeException;
 import org.slf4j.Logger;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -32,7 +34,7 @@ public class Controller {
      */
 
     @GET //@path + any extra, in this case since no argument with @get, just at @path
-    public ArrayList displayAccounts() {
+    public String displayAccounts() {
         ArrayList<Account> accounts = new ArrayList<>();
         ArrayList<String> accountOwners = new ArrayList<>();
         accountOwners.add("Rachel");
@@ -48,16 +50,20 @@ public class Controller {
             for(int i = 0; i <= 5; i++) {
                 ResultSet set = statement.executeQuery("SELECT * FROM AccountDataset Where Name = '" + accountOwners.get(i) + "'");
                 set.next();
-                System.out.println(set.getString("Name"));
-                System.out.println(set.getFloat("Balance"));
                 Account newAccount = new Account(set.getString("Name"), set.getFloat("Balance"));
                 accounts.add(newAccount);
             }
 
-            return accounts;
+            ObjectMapper objectMapper = new ObjectMapper();
+            String objectOutput = objectMapper.writeValueAsString(accounts);
+
+            return objectOutput.substring(1, objectOutput.length() -1);
         } catch (SQLException e) {
             logger.error("Database Error Occurred", e);
             throw new StatusCodeException(StatusCode.SERVER_ERROR, "Database Error Occurred");
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
+        return "";
     }
 }
