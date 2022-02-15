@@ -13,29 +13,17 @@
   <title>GET Endpoint — Test</title>
 </head>
 <body>
-    {{#mapTest}}
-        <h1>Hello {{accounts}}, {{user}}, {{mapTest}}.</h1>
-    {{/mapTest}}
-
-    <h1>Hello {{accounts}}</h1>
-    <h1>Hello {{user}}</h1>
-    <h1>Hello {{mapTest}}</h1>
   <table>
     <tr>
-        <th>Firstname</th>
-        <th>Lastname</th>
-        <th>Age</th>
+        <th>First Name</th>
+        <th>Balance</th>
     </tr>
-    <tr>
-        <td>Jill</td>
-        <td>Smith</td>
-        <td>50</td>
-    </tr>
-    <tr>
-        <td>Eve</td>
-        <td>Jackson</td>
-        <td>94</td>
-    </tr>
+    {{#user}}
+        <tr>
+            <td>{{name}}</td>
+            <td>{{balance}}</td>
+        </tr>
+    {{/user}}
   </table>
 </body>
 </html>

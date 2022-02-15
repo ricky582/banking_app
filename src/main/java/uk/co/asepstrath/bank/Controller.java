@@ -64,16 +64,10 @@ public class Controller {
 
         ObjectMapper mapper = new ObjectMapper();
         List<Map<String, Object>> listData = mapper.readValue(objectOutput, new TypeReference<List<Map<String, Object>>>(){});
-        Map<String, Object> mapTest = new HashMap<>();
 
-        for (Map<String, Object> map : listData) {
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                String name = entry.getKey();
-//              Double balance = (Double) entry.getValue();
-                mapTest.put("accounts", "accounts");
-                mapTest.put("user", new Account("Rachel", 50));
-            }
-        }
+        Map<String, Object> mapTest = new HashMap<>();
+        mapTest.put("accounts", "accounts");
+        mapTest.put("user", listData);
 
         return new ModelAndView("accounts.hbs", mapTest);
     }
