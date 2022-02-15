@@ -51,6 +51,13 @@ public class App extends Jooby {
         it should be used to ensure that the DB is properly setup
      */
 
+//    {
+//        get("/", req -> {
+//            //Line that throws the error:
+//            return Results.html("home").put("model", new Object());
+//        });
+//    }
+
     public void onStart() {
         Logger log = getLog();
         log.info("Starting Up...");

@@ -1,17 +1,20 @@
 package uk.co.asepstrath.bank;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.jooby.StatusCode;
-import io.jooby.annotations.*;
-import io.jooby.exception.StatusCodeException;
-import org.slf4j.Logger;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jooby.ModelAndView;
+import io.jooby.annotations.GET;
+import io.jooby.annotations.Path;
+import org.slf4j.Logger;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 //Path = IP/argument, i.e("localhost:8080/accounts)
 @Path("/accounts")
@@ -34,36 +37,44 @@ public class Controller {
      */
 
     @GET //@path + any extra, in this case since no argument with @get, just at @path
-    public String displayAccounts() {
+    public String displayAccounts() throws JsonProcessingException {
+        ArrayList<Account> accounts = gatherAccounts();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String objectOutput = objectMapper.writeValueAsString(accounts);
+
+        return objectOutput;
+    }
+
+    public ArrayList<Account> gatherAccounts() {
         ArrayList<Account> accounts = new ArrayList<>();
-        ArrayList<String> accountOwners = new ArrayList<>();
-        accountOwners.add("Rachel");
-        accountOwners.add("Monica");
-        accountOwners.add("Phoebe");
-        accountOwners.add("Joey");
-        accountOwners.add("Chandler");
-        accountOwners.add("Ross");
+        accounts.add(new Account("Rachel", 50));
+        accounts.add(new Account("Monica", 100.00));
+        accounts.add(new Account("Phoebe", 76));
+        accounts.add(new Account("Joey", 23.90));
+        accounts.add(new Account("Chandler", 3.00));
+        accounts.add(new Account("Ross", 54.32));
 
-        try (Connection connection = dataSource.getConnection()) {
-            Statement statement = connection.createStatement();
+        return accounts;
+    }
 
-            for(int i = 0; i <= 5; i++) {
-                ResultSet set = statement.executeQuery("SELECT * FROM AccountDataset Where Name = '" + accountOwners.get(i) + "'");
-                set.next();
-                Account newAccount = new Account(set.getString("Name"), set.getFloat("Balance"));
-                accounts.add(newAccount);
+    @GET("/get")
+    public ModelAndView accounts() throws IOException {
+        String objectOutput = displayAccounts();
+
+        ObjectMapper mapper = new ObjectMapper();
+        List<Map<String, Object>> listData = mapper.readValue(objectOutput, new TypeReference<List<Map<String, Object>>>(){});
+        Map<String, Object> mapTest = new HashMap<>();
+
+        for (Map<String, Object> map : listData) {
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                String name = entry.getKey();
+//              Double balance = (Double) entry.getValue();
+                mapTest.put("accounts", "accounts");
+                mapTest.put("user", new Account("Rachel", 50));
             }
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            String objectOutput = objectMapper.writeValueAsString(accounts);
-
-            return objectOutput.substring(1, objectOutput.length() -1);
-        } catch (SQLException e) {
-            logger.error("Database Error Occurred", e);
-            throw new StatusCodeException(StatusCode.SERVER_ERROR, "Database Error Occurred");
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
         }
-        return "";
+
+        return new ModelAndView("accounts.hbs", mapTest);
     }
 }

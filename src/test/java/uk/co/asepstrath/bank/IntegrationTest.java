@@ -24,7 +24,7 @@ public class IntegrationTest {
                 .build();
 
         try (Response rsp = client.newCall(req).execute()) {
-            assertEquals("{\"name\":\"Rachel\",\"balance\":50.0},{\"name\":\"Monica\",\"balance\":100.0},{\"name\":\"Phoebe\",\"balance\":76.0},{\"name\":\"Joey\",\"balance\":23.9},{\"name\":\"Chandler\",\"balance\":3.0},{\"name\":\"Ross\",\"balance\":54.32}", rsp.body().string());
+            assertEquals("[{\"name\":\"Rachel\",\"balance\":50.0},{\"name\":\"Monica\",\"balance\":100.0},{\"name\":\"Phoebe\",\"balance\":76.0},{\"name\":\"Joey\",\"balance\":23.9},{\"name\":\"Chandler\",\"balance\":3.0},{\"name\":\"Ross\",\"balance\":54.32}]", rsp.body().string());
             assertEquals(StatusCode.OK.value(), rsp.code());
         }
     }
