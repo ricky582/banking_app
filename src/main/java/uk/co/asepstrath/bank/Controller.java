@@ -39,11 +39,9 @@ public class Controller {
     @GET //@path + any extra, in this case since no argument with @get, just at @path
     public String displayAccounts() throws JsonProcessingException {
         ArrayList<Account> accounts = gatherAccounts();
-
         ObjectMapper objectMapper = new ObjectMapper();
-        String objectOutput = objectMapper.writeValueAsString(accounts);
 
-        return objectOutput;
+        return objectMapper.writeValueAsString(accounts);
     }
 
     public ArrayList<Account> gatherAccounts() {

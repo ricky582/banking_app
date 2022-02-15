@@ -1,14 +1,6 @@
 package uk.co.asepstrath.bank;
 
 import org.junit.jupiter.api.*;
-import org.slf4j.Logger;
-
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UnitTest {
     /*

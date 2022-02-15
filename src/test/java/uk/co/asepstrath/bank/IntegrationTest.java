@@ -28,4 +28,15 @@ public class IntegrationTest {
             assertEquals(StatusCode.OK.value(), rsp.code());
         }
     }
+
+    public void showAccount(int serverPort) throws IOException {
+        Request req = new Request.Builder()
+                .url("http://localhost:" + serverPort + "/accounts/get")
+                .build();
+
+        try (Response rsp = client.newCall(req).execute()) {
+            assertEquals("{accounts=accounts, user=[{name=Rachel, balance=50.0}, {name=Monica, balance=100.0}, {name=Phoebe, balance=76.0}, {name=Joey, balance=23.9}, {name=Chandler, balance=3.0}, {name=Ross, balance=54.32}]}", rsp.body().string());
+            assertEquals(StatusCode.OK.value(), rsp.code());
+        }
+    }
 }

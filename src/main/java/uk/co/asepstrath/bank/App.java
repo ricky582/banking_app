@@ -51,13 +51,6 @@ public class App extends Jooby {
         it should be used to ensure that the DB is properly setup
      */
 
-//    {
-//        get("/", req -> {
-//            //Line that throws the error:
-//            return Results.html("home").put("model", new Object());
-//        });
-//    }
-
     public void onStart() {
         Logger log = getLog();
         log.info("Starting Up...");
@@ -68,19 +61,6 @@ public class App extends Jooby {
         try (Connection connection = ds.getConnection()) {
             //Populate The Database
             Statement stmt = connection.createStatement();
-            Object[][] dataSet = new Object[][]{
-                    {"Rachel", 50.00},
-                    {"Monica", 100.00},
-                    {"Phoebe", 76.00},
-                    {"Joey", 23.90},
-                    {"Chandler", 3.00},
-                    {"Ross", 54.32},
-            };
-            stmt.executeUpdate("CREATE TABLE AccountDataset (Name varchar(255), Balance float)");
-
-            for(int i = 0; i <= 5; i++) {
-                stmt.executeUpdate("INSERT INTO AccountDataset " + "VALUES ('"+ dataSet[i][0] +"', '"+ dataSet[i][1] +"')");
-            }
         } catch (SQLException e) {
             log.error("Database Creation Error", e);
         }
