@@ -9,13 +9,19 @@
 <body>
    <table>
       <tr>
-         <th>First Name</th>
-         <th>Balance</th>
+        <th>ID</th>
+        <th>First Name</th>
+        <th>Balance</th>
+        <th>Account Type</th>
+        <th>Currency</th>
       </tr>
       {{#user}}
       <tr>
+         <td>{{id}}</td>
          <td>{{name}}</td>
          <td>{{balance}}</td>
+         <td>{{accountType}}</td>
+         <td>{{currency}}</td>
       </tr>
       {{/user}}
    </table>

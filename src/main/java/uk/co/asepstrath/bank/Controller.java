@@ -76,8 +76,8 @@ public class Controller {
         return new ModelAndView("accounts.hbs", mapTest);
     }
 
-    @GET("/testing")
-    public ModelAndView accountsData() throws IOException {
+    @GET("/accountsData")
+    public ModelAndView accountsData() {
         ArrayList<Account> arrayListAccount = retrieveData();
         Map<String, Object> mapTest = new HashMap<>();
 
