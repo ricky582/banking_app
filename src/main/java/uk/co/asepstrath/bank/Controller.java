@@ -80,18 +80,11 @@ public class Controller {
     }
 
     public ArrayList<Account> fetchData() {
-        ArrayList<Account> accountsData = new ArrayList<>();
         String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/Team1/accounts")
                 .asJson()
                 .getBody());
 
-        accountsData = parseJson(jsonResult);
-
-        for(int i = 0; i < accountsData.size(); i++) {
-            System.out.println(accountsData.get(i));
-        }
-
-        return accountsData;
+        return parseJson(jsonResult);
     }
 
     public ArrayList<Account> parseJson(String responseBody) {
