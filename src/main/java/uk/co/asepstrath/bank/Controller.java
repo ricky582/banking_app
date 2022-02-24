@@ -84,6 +84,12 @@ public class Controller {
                 .asJson()
                 .getBody());
 
+//        ArrayList<Account> test = parseJson(jsonResult);
+//
+//        for (int i = 0; i < test.size(); i++) {
+//            System.out.println(test.get(i));
+//        }
+
         return parseJson(jsonResult);
     }
 
@@ -92,7 +98,8 @@ public class Controller {
         JSONArray accountsData = new JSONArray(responseBody);
         for (int i = 0; i < accountsData.length(); i++) {
             JSONObject accountData = accountsData.getJSONObject(i);
-            accounts.add(new Account(accountData.getString("name"), accountData.getDouble("balance")));
+            accounts.add(new Account(accountData.getString("id"), accountData.getString("name"), accountData.getDouble("balance"), accountData.getString("accountType"), accountData.getString("currency")));
+            System.out.println(accounts.get(i));
         }
         return accounts;
     }

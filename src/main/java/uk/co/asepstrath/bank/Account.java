@@ -4,10 +4,21 @@ public class Account {
 
     private String name;
     private double bal;
+    private String id;
+    private String accountType;
+    private String currency;
 
     public Account(String n, double amount) {
         name = n;
         bal = amount;
+    }
+
+    public Account(String id, String n, double amount, String accountType, String currency) {
+        id = id;
+        name = n;
+        bal = amount;
+        accountType = accountType;
+        currency = currency;
     }
 
     @Override
@@ -41,5 +52,13 @@ public class Account {
     public String getName() {
         return name;
     }
-
+    public String getID() {
+        return id;
+    }
+    public String getAccountType() {
+        return accountType;
+    }
+    public String getCurrency() {
+        return currency;
+    }
 }

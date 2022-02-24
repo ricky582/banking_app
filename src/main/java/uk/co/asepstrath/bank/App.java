@@ -4,6 +4,7 @@ import io.jooby.Jooby;
 import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
+import kong.unirest.json.JSONObject;
 import org.slf4j.Logger;
 import javax.sql.DataSource;
 import java.sql.*;
@@ -52,6 +53,10 @@ public class App extends Jooby {
         Controller control1 = new Controller(ds,log);
         ArrayList<Account> acc = control1.fetchData();
 
+//        for (int i = 0; i < acc.size(); i++) {
+//            System.out.println(acc.get(i));
+//        }
+
         // Open Connection to DB
         try (Connection connection = ds.getConnection()) {
             //Populate The Database
@@ -59,19 +64,23 @@ public class App extends Jooby {
             String sql = "CREATE TABLE IF NOT EXISTS accounts (\n"
                     + " id integer PRIMARY KEY,\n"
                     + " name text NOT NULL,\n"
-                    + " balance decimal NOT NULL);";
+                    + " balance decimal NOT NULL,\n"
+                    + " accountType text NOT NULL,\n"
+                    + " currency text NOT NULL);";
 
             stmt.execute(sql);
 
-            sql = "INSERT INTO accounts (id,name,balance) "
-                    + "VALUES (?,?,?)";
+            sql = "INSERT INTO accounts (id, name, balance, accountType, currency) "
+                    + "VALUES (?,?,?,?,?)";
 
             PreparedStatement prep = connection.prepareStatement(sql);
 
             for(int x = 0; x < acc.size() ;x++) {
-                prep.setInt(1,x);
-                prep.setString(2,acc.get(x).getName());
-                prep.setDouble(3,acc.get(x).getBalance());
+                prep.setString(1, acc.get(x).getID());
+                prep.setString(2, acc.get(x).getName());
+                prep.setDouble(3, acc.get(x).getBalance());
+                prep.setString(4, acc.get(x).getAccountType());
+                prep.setString(5, acc.get(x).getCurrency());
                 prep.executeUpdate();
             }
 
@@ -80,10 +89,13 @@ public class App extends Jooby {
             ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
+                String id = rs.getString("id");
                 String name = rs.getString("name");
                 double balance = rs.getDouble("balance");
+                String accountType = rs.getString("accountType");
+                String currency = rs.getString("currency");
 
-                Account employee = new Account(name,balance);
+                Account employee = new Account(id, name, balance, accountType, currency);
                 System.out.println(employee);
             }
             rs.close();
