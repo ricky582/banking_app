@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jooby.ModelAndView;
 import io.jooby.annotations.GET;
 import io.jooby.annotations.Path;
+import kong.unirest.GenericType;
+import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -78,44 +81,27 @@ public class Controller {
 
     @GET("/test")
     public int fetchData() {
-        BufferedReader connectionReader;
-        StringBuffer responseContent = new StringBuffer();
-        String line;
-        int status;
+        ArrayList<Account> accountsData = new ArrayList<>();
+        String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/Team1/accounts")
+                .asJson()
+                .getBody());
 
-        try {
-            URL url = new URL("https://api.asep-strath.co.uk/api/Team1/accounts");
-            urlConn = (HttpURLConnection) url.openConnection();
-            urlConn.setRequestMethod("GET");
+        accountsData = parseJson(jsonResult);
 
-            status = urlConn.getResponseCode();
-
-            if (status == 200) {
-                connectionReader = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
-                while((line = connectionReader.readLine()) != null) {
-                    responseContent.append(line);
-                }
-                connectionReader.close();
-            } else {
-                connectionReader = new BufferedReader(new InputStreamReader(urlConn.getErrorStream()));
-                while((line = connectionReader.readLine()) != null) {
-                    responseContent.append(line);
-                }
-                connectionReader.close();
-            }
-            printJson(responseContent.toString());
-        }  catch (IOException e) {} finally {
-            urlConn.disconnect();
+        for(int i = 0; i < accountsData.size(); i++) {
+            System.out.println(accountsData.get(i));
         }
 
         return 0;
     }
 
-    public void printJson(String responseBody) {
+    public ArrayList<Account> parseJson(String responseBody) {
+        ArrayList<Account> accounts = new ArrayList<>();
         JSONArray accountsData = new JSONArray(responseBody);
         for (int i = 0; i < accountsData.length(); i++) {
             JSONObject accountData = accountsData.getJSONObject(i);
-            System.out.println(accountData);
+            accounts.add(new Account(accountData.getString("name"), accountData.getDouble("balance")));
         }
+        return accounts;
     }
 }
