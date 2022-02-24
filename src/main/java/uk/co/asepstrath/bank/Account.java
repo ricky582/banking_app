@@ -24,7 +24,7 @@ public class Account {
     @Override
     public String toString()
     {
-        return String.valueOf(name + " " + getBalance());
+        return String.valueOf(id + " " + name + " " + getBalance() + " " + accountType + " " + currency);
     }
 
 
