@@ -127,4 +127,57 @@ public class Controller {
         } catch (SQLException e) {}
         return accounts;
     }
+
+    @GET("/transactionData")
+    public ModelAndView transactionData() {
+        ArrayList<Transaction> arrayListTransaction = retrieveDataTransaction();
+        Map<String, Object> mapTest = new HashMap<>();
+
+        mapTest.put("transaction", "transaction");
+        mapTest.put("transac", arrayListTransaction);
+
+        return new ModelAndView("transactionData.hbs", mapTest);
+    }
+
+    public ArrayList<Transaction> fetchDataTransaction() {
+        String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/Team1/transactions")
+                .asJson()
+                .getBody());
+
+        return parseJsonTransaction(jsonResult);
+    }
+
+    public ArrayList<Transaction> parseJsonTransaction(String responseBody) {
+        ArrayList<Transaction> accounts = new ArrayList<>();
+        JSONArray accountsData = new JSONArray(responseBody);
+        for (int i = 0; i < accountsData.length(); i++) {
+            JSONObject accountData = accountsData.getJSONObject(i);
+            accounts.add(new Transaction(accountData.getString("withdrawAccount"), accountData.getString("depositAccount"), accountData.getString("timestamp"), accountData.getString("id"), accountData.getDouble("amount"), accountData.getString("currency")));
+        }
+
+        return accounts;
+    }
+
+    public ArrayList<Transaction> retrieveDataTransaction() {
+        ArrayList<Transaction> transactions = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection()) {
+            Statement stmt = connection.createStatement();
+            String sql = "SELECT * FROM transactions";
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                String withdrawAccount = rs.getString("withdrawAccount");
+                String depositAccount = rs.getString("depositAccount");
+                String timestamp = rs.getString("timestamp");
+                String id = rs.getString("id");
+                double amount = rs.getDouble("amount");
+                String currency = rs.getString("currency");
+
+                Transaction bankTransaction = new Transaction(withdrawAccount, depositAccount, timestamp, id, amount, currency);
+                transactions.add(bankTransaction);
+            }
+            rs.close();
+        } catch (SQLException e) {}
+        return transactions;
+    }
 }

@@ -84,6 +84,43 @@ public class App extends Jooby {
         } catch (SQLException e) {
             log.error("Database Creation Error", e);
         }
+
+
+        ArrayList<Transaction> transac = control1.fetchDataTransaction();
+        // Open Connection to DB
+        try (Connection connection = ds.getConnection()) {
+            //Populate The Database
+            Statement stmt = connection.createStatement();
+            String sql = "CREATE TABLE IF NOT EXISTS transactions (\n"
+                    + " withdrawAccount varchar(50) NOT NULL, \n"
+                    + " depositAccount varchar(50) NOT NULL, \n"
+                    + " timestamp text NOT NULL, \n"
+                    + " id varchar(50) PRIMARY KEY,\n"
+                    + " amount decimal NOT NULL,\n"
+                    + " currency text NOT NULL);";
+
+            stmt.execute(sql);
+
+            sql = "INSERT INTO transactions (withdrawAccount, depositAccount, timestamp, id, amount, currency) "
+                    + "VALUES (?,?,?,?,?,?)";
+
+            PreparedStatement prep = connection.prepareStatement(sql);
+
+            for(int x = 0; x < transac.size() ;x++) {
+                prep.setString(1, transac.get(x).getWidAcc());
+                prep.setString(2, transac.get(x).getDepAcc());
+                prep.setString(3, transac.get(x).getTimestamp());
+                prep.setString(4, transac.get(x).getId());
+                prep.setDouble(5, transac.get(x).getAmount());
+                prep.setString(6, transac.get(x).getCurrency());
+                prep.executeUpdate();
+            }
+
+            prep.close();
+            stmt.close();
+        } catch (SQLException e) {
+            log.error("Database Creation Error", e);
+        }
     }
     public void onStop() {
         System.out.println("Shutting Down...");
