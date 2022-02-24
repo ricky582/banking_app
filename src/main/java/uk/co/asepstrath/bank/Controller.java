@@ -77,7 +77,7 @@ public class Controller {
     }
 
     @GET("/test")
-    public int fetchData() throws IOException {
+    public int fetchData() {
         BufferedReader connectionReader;
         StringBuffer responseContent = new StringBuffer();
         String line;
@@ -103,7 +103,7 @@ public class Controller {
                 }
                 connectionReader.close();
             }
-            parseJson(responseContent.toString());
+            printJson(responseContent.toString());
         }  catch (IOException e) {} finally {
             urlConn.disconnect();
         }
@@ -111,12 +111,11 @@ public class Controller {
         return 0;
     }
 
-    public static String parseJson(String responseBody) {
+    public void printJson(String responseBody) {
         JSONArray accountsData = new JSONArray(responseBody);
         for (int i = 0; i < accountsData.length(); i++) {
             JSONObject accountData = accountsData.getJSONObject(i);
             System.out.println(accountData);
         }
-        return "a";
     }
 }
