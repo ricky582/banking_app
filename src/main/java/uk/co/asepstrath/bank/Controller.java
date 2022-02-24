@@ -4,21 +4,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jooby.ModelAndView;
+import io.jooby.Jooby;
 import io.jooby.annotations.GET;
 import io.jooby.annotations.Path;
-import kong.unirest.GenericType;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 import org.slf4j.Logger;
 
 import javax.sql.DataSource;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,16 +76,21 @@ public class Controller {
         return new ModelAndView("accounts.hbs", mapTest);
     }
 
+    @GET("/testing")
+    public ModelAndView accountsData() throws IOException {
+        ArrayList<Account> arrayListAccount = retrieveData();
+        Map<String, Object> mapTest = new HashMap<>();
+
+        mapTest.put("accounts", "accounts");
+        mapTest.put("user", arrayListAccount);
+
+        return new ModelAndView("accountsData.hbs", mapTest);
+    }
+
     public ArrayList<Account> fetchData() {
         String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/Team1/accounts")
                 .asJson()
                 .getBody());
-
-//        ArrayList<Account> test = parseJson(jsonResult);
-//
-//        for (int i = 0; i < test.size(); i++) {
-//            System.out.println(test.get(i));
-//        }
 
         return parseJson(jsonResult);
     }
@@ -99,8 +101,30 @@ public class Controller {
         for (int i = 0; i < accountsData.length(); i++) {
             JSONObject accountData = accountsData.getJSONObject(i);
             accounts.add(new Account(accountData.getString("id"), accountData.getString("name"), accountData.getDouble("balance"), accountData.getString("accountType"), accountData.getString("currency")));
-            System.out.println(accounts.get(i));
         }
+
+        return accounts;
+    }
+
+    public ArrayList<Account> retrieveData() {
+        ArrayList<Account> accounts = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection()) {
+            Statement stmt = connection.createStatement();
+            String sql = "SELECT * FROM accounts";
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                String id = rs.getString("id");
+                String name = rs.getString("name");
+                double balance = rs.getDouble("balance");
+                String accountType = rs.getString("accountType");
+                String currency = rs.getString("currency");
+
+                Account bankUser = new Account(id, name, balance, accountType, currency);
+                accounts.add(bankUser);
+            }
+            rs.close();
+        } catch (SQLException e) {}
         return accounts;
     }
 }

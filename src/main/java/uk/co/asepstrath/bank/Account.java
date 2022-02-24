@@ -3,22 +3,22 @@ package uk.co.asepstrath.bank;
 public class Account {
 
     private String name;
-    private double bal;
+    private double balance;
     private String id;
     private String accountType;
     private String currency;
 
     public Account(String n, double amount) {
         name = n;
-        bal = amount;
+        balance = amount;
     }
 
-    public Account(String id, String n, double amount, String accountType, String currency) {
-        id = id;
-        name = n;
-        bal = amount;
-        accountType = accountType;
-        currency = currency;
+    public Account(String id, String name, double balance, String accountType, String currency) {
+        this.id = id;
+        this.name = name;
+        this.balance = balance;
+        this.accountType = accountType;
+        this.currency = currency;
     }
 
     @Override
@@ -29,22 +29,22 @@ public class Account {
 
 
     public void deposit(double amount) {
-        bal += amount;
+        balance += amount;
     }
 
     public void withdraw(double amount) throws ArithmeticException {
-        if (amount > bal) {
+        if (amount > balance) {
             throw new ArithmeticException();
         }
 
-        bal -= amount;
+        balance -= amount;
     }
 
     public double getBalance() {
-        bal = bal * 100;
-        bal = Math.round(bal);
-        bal = bal / 100;
-        return bal;
+        balance = balance * 100;
+        balance = Math.round(balance);
+        balance = balance / 100;
+        return balance;
 
         //Doing Math.round(bal*100)/100 would return 1dp, and just returning bal had some funky math (double math not accurate)
     }
@@ -52,12 +52,15 @@ public class Account {
     public String getName() {
         return name;
     }
+
     public String getID() {
         return id;
     }
+
     public String getAccountType() {
         return accountType;
     }
+
     public String getCurrency() {
         return currency;
     }

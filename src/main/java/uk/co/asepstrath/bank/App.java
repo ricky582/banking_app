@@ -4,7 +4,6 @@ import io.jooby.Jooby;
 import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
-import kong.unirest.json.JSONObject;
 import org.slf4j.Logger;
 import javax.sql.DataSource;
 import java.sql.*;
@@ -53,16 +52,12 @@ public class App extends Jooby {
         Controller control1 = new Controller(ds,log);
         ArrayList<Account> acc = control1.fetchData();
 
-//        for (int i = 0; i < acc.size(); i++) {
-//            System.out.println(acc.get(i));
-//        }
-
         // Open Connection to DB
         try (Connection connection = ds.getConnection()) {
             //Populate The Database
             Statement stmt = connection.createStatement();
             String sql = "CREATE TABLE IF NOT EXISTS accounts (\n"
-                    + " id integer PRIMARY KEY,\n"
+                    + " id varchar(50) PRIMARY KEY,\n"
                     + " name text NOT NULL,\n"
                     + " balance decimal NOT NULL,\n"
                     + " accountType text NOT NULL,\n"
@@ -84,22 +79,8 @@ public class App extends Jooby {
                 prep.executeUpdate();
             }
 
-            stmt = connection.createStatement();
-            sql = "SELECT * FROM accounts";
-            ResultSet rs = stmt.executeQuery(sql);
-
-            while (rs.next()) {
-                String id = rs.getString("id");
-                String name = rs.getString("name");
-                double balance = rs.getDouble("balance");
-                String accountType = rs.getString("accountType");
-                String currency = rs.getString("currency");
-
-                Account employee = new Account(id, name, balance, accountType, currency);
-                System.out.println(employee);
-            }
-            rs.close();
-            connection.close();
+            prep.close();
+            stmt.close();
         } catch (SQLException e) {
             log.error("Database Creation Error", e);
         }
