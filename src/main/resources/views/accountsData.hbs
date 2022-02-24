@@ -5,25 +5,46 @@
    <meta name="description" content="">
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <title>GET Endpoint — Test</title>
+   <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+   <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+   <link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
+   <script>
+        $(document).ready(function() {
+            $('#example').DataTable();
+        } );
+   </script>
 </head>
 <body>
-   <table>
-      <tr>
-        <th>ID</th>
-        <th>First Name</th>
-        <th>Balance</th>
-        <th>Account Type</th>
-        <th>Currency</th>
-      </tr>
-      {{#user}}
-      <tr>
-         <td>{{iD}}</td>
-         <td>{{name}}</td>
-         <td>{{balance}}</td>
-         <td>{{accountType}}</td>
-         <td>{{currency}}</td>
-      </tr>
-      {{/user}}
-   </table>
+   <table id="example" class="display" style="width:100%">
+           <thead>
+               <tr>
+                   <th>ID</th>
+                   <th>Name</th>
+                   <th>Balance</th>
+                   <th>Account Type</th>
+                   <th>Currency</th>
+               </tr>
+           </thead>
+           <tbody>
+           {{#user}}
+               <tr>
+                    <td>{{id}}</td>
+                    <td>{{name}}</td>
+                    <td>{{balance}}</td>
+                    <td>{{accountType}}</td>
+                    <td>{{currency}}</td>
+               </tr>
+           {{/user}}
+           </tbody>
+           <tfoot>
+               <tr>
+                   <th>ID</th>
+                   <th>Name</th>
+                   <th>Balance</th>
+                   <th>Account Type</th>
+                   <th>Currency</th>
+               </tr>
+           </tfoot>
+       </table>
 </body>
 </html>
