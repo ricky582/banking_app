@@ -79,8 +79,7 @@ public class Controller {
         return new ModelAndView("accounts.hbs", mapTest);
     }
 
-    @GET("/test")
-    public int fetchData() {
+    public ArrayList<Account> fetchData() {
         ArrayList<Account> accountsData = new ArrayList<>();
         String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/Team1/accounts")
                 .asJson()
@@ -92,7 +91,7 @@ public class Controller {
             System.out.println(accountsData.get(i));
         }
 
-        return 0;
+        return accountsData;
     }
 
     public ArrayList<Account> parseJson(String responseBody) {
