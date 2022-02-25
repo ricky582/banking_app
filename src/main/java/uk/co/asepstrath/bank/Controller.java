@@ -185,4 +185,35 @@ public class Controller {
         } catch (SQLException e) {}
         return transactions;
     }
+
+    //transaction data by account giving information required in user story
+    @GET("/transactionData/byAccount")
+    public ModelAndView transactionDataAcc() {
+        ArrayList<TransactionInfo> arrayListTransactionAcc = retrieveDataTransactionAcc();
+        Map<String, Object> mapTest = new HashMap<>();
+
+        mapTest.put("transaction", "transaction"); //CHANGE TO RIGHT DB
+        mapTest.put("user", arrayListTransactionAcc); //user shows in hbs file
+
+        return new ModelAndView("transactionDataAcc.hbs", mapTest);
+    }
+
+
+    public ArrayList<TransactionInfo> retrieveDataTransactionAcc() {
+        ArrayList<Transaction> transactions = retrieveDataTransaction();
+        ArrayList<Account> accounts = retrieveData();
+        ArrayList<TransactionInfo> transactionInfo = new ArrayList<>();
+
+        for (Account account : accounts){
+            ArrayList<Transaction> temp = new ArrayList<>();
+            for (Transaction transaction : transactions){
+                if (transaction.getWidAcc() == account.getID()){
+                    temp.add(transaction);
+                }
+            }
+            transactionInfo.add(new TransactionInfo(account, temp));
+        }
+
+        return transactionInfo;
+    }
 }
