@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 //Path = IP/argument, i.e("localhost:8080/accounts)
-@Path("/accounts")
+@Path("/")
 public class Controller {
 
     private static HttpURLConnection urlConn;
@@ -42,7 +42,12 @@ public class Controller {
         This request makes a call to the passed in data source (The Database) which has been set up in App.java
      */
 
-    @GET //@path + any extra, in this case since no argument with @get, just at @path
+    @GET("/")
+    public ModelAndView index() {
+        return new ModelAndView("index.hbs");
+    }
+
+    @GET("/api")
     public String displayAccounts() throws JsonProcessingException {
         ArrayList<Account> accounts = gatherAccounts();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -62,7 +67,7 @@ public class Controller {
         return accounts;
     }
 
-    @GET("/get")
+    @GET("/accounts")
     public ModelAndView accounts() throws IOException {
         String objectOutput = displayAccounts();
 
@@ -140,7 +145,7 @@ public class Controller {
     }
 
     public ArrayList<Transaction> fetchDataTransaction() {
-        String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/Team1/transactions")
+        String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/team1/transactions?PageSize=10000")
                 .asJson()
                 .getBody());
 
