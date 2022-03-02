@@ -55,7 +55,17 @@
             <artifactId>h2</artifactId>
             <version>1.4.200</version>
         </dependency>
-
+        <!-- Mobile Application -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>2.1.6</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jooby</groupId>
+            <artifactId>jooby-swagger-ui</artifactId>
+            <version>2.13.0</version>
+        </dependency>
         <!-- Tests -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -116,15 +126,24 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M3</version>
-            </plugin>
+
             <!-- jooby:run -->
             <plugin>
                 <groupId>io.jooby</groupId>
                 <artifactId>jooby-maven-plugin</artifactId>
                 <version>${jooby.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>io.jooby</groupId>
+                <artifactId>jooby-maven-plugin</artifactId>
+                <version>2.13.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>openapi</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <!-- Build uber jar -->
             <plugin>
@@ -155,6 +174,7 @@
     </build>
 
     <dependencyManagement>
+
         <dependencies>
             <dependency>
                 <groupId>io.jooby</groupId>

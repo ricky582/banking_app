@@ -7,6 +7,8 @@ import io.jooby.ModelAndView;
 import io.jooby.Jooby;
 import io.jooby.annotations.GET;
 import io.jooby.annotations.Path;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
@@ -43,12 +45,17 @@ public class Controller {
      */
 
     @GET //@path + any extra, in this case since no argument with @get, just at @path
+    @Operation(
+            summary = "Display Accounts",
+            description = "Display raw array data from the hardcoded values created by this method"
+    )
     public String displayAccounts() throws JsonProcessingException {
         ArrayList<Account> accounts = gatherAccounts();
         ObjectMapper objectMapper = new ObjectMapper();
 
         return objectMapper.writeValueAsString(accounts);
     }
+
 
     public ArrayList<Account> gatherAccounts() {
         ArrayList<Account> accounts = new ArrayList<>();
@@ -63,6 +70,10 @@ public class Controller {
     }
 
     @GET("/get")
+    @Operation(
+            summary = "Display Hard Coded",
+            description = "Display hard coded accounts on a table or throws a 404"
+    )
     public ModelAndView accounts() throws IOException {
         String objectOutput = displayAccounts();
 
@@ -77,6 +88,10 @@ public class Controller {
     }
 
     @GET("/accountsData")
+    @Operation(
+            summary = "Display All Accounts",
+            description = "Display all accounts in the bank collection, kept on a table of ten which is scrollable/searchable"
+    )
     public ModelAndView accountsData() {
         ArrayList<Account> arrayListAccount = retrieveData();
         Map<String, Object> mapTest = new HashMap<>();
@@ -129,6 +144,10 @@ public class Controller {
     }
 
     @GET("/transactionData")
+    @Operation(
+            summary = "Display All Transactions",
+            description = "Display all transactions in the bank collection, kept on a table of ten which is scrollable/searchable"
+    )
     public ModelAndView transactionData() {
         ArrayList<Transaction> arrayListTransaction = retrieveDataTransaction();
         Map<String, Object> mapTest = new HashMap<>();
@@ -140,7 +159,7 @@ public class Controller {
     }
 
     public ArrayList<Transaction> fetchDataTransaction() {
-        String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/Team1/transactions")
+        String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/team1/transactions?PageSize=10000")
                 .asJson()
                 .getBody());
 

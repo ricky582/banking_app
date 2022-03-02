@@ -1,0 +1,11 @@
+openapi: 3.0.1
+info:
+  title: Bank app
+  description: |
+    A bank made by cs217 group 1, holds info on Accounts and transactions made at the bank
+
+    ...
+  version: "1.0"
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html

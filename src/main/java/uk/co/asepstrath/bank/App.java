@@ -1,14 +1,39 @@
 package uk.co.asepstrath.bank;
 
 import io.jooby.Jooby;
+import io.jooby.OpenAPIModule;
 import io.jooby.handlebars.HandlebarsModule;
 import io.jooby.helper.UniRestExtension;
 import io.jooby.hikari.HikariModule;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
-import javax.sql.DataSource;
-import java.sql.*;
-import java.util.ArrayList;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+@OpenAPIDefinition(
+        info = @Info(
+                title = "your-bank",
+                description = "A banking app that allows for display, process and management of accounts and transactions",
+                contact = @Contact(
+                        url = "bank.com",
+                        email = "admin@bank.com"
+                ),
+
+                version = "1.00"
+        ),
+        tags = @Tag(name = "Accounts")
+)
 public class App extends Jooby {
 
     {
@@ -18,6 +43,8 @@ public class App extends Jooby {
         install(new UniRestExtension());
         install(new HandlebarsModule());
         install(new HikariModule("mem"));
+        install(new OpenAPIModule());
+        install(new OpenAPIModule());
 
         /*
         This will host any files in src/main/resources/assets on <host>/assets
@@ -39,7 +66,8 @@ public class App extends Jooby {
         onStarted(() -> onStart());
         onStop(() -> onStop());
     }
-
+    @Tag(name = "Start App", description = "Basic app start operations")
+    @ApiResponse(description = "This is the default response")
     public static void main(final String[] args) {
         runApp(args, App::new);
     }
@@ -122,6 +150,7 @@ public class App extends Jooby {
             log.error("Database Creation Error", e);
         }
     }
+
     public void onStop() {
         System.out.println("Shutting Down...");
     }

@@ -31,4 +31,5 @@ public class Transaction {
     public String getCurrency(){return currency;}
 
 
+
 }
