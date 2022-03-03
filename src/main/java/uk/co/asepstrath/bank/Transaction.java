@@ -1,26 +1,28 @@
 package uk.co.asepstrath.bank;
 
-public class Transaction {
+public class Transaction implements Comparable<Transaction> {
 
-    private String withdrawAccount;
-    private String depositAccount;
+    private Account withdrawAccount;
+    private Account depositAccount;
     private String timestamp;
     private String id;
     private double amount;
     private String currency;
+    private boolean done;
 
-    public Transaction(String withdrawAccount, String depositAccount, String timestamp, String id, double amount, String currency){
+    public Transaction(Account withdrawAccount, Account depositAccount, String timestamp, String id, double amount, String currency){
         this.withdrawAccount = withdrawAccount;
         this.depositAccount = depositAccount;
         this.timestamp = timestamp;
         this.id = id;
         this.amount = amount;
         this.currency = currency;
+        this.done = false;
     }
 
-    public String getWidAcc(){return withdrawAccount;}
+    public Account getWidAcc(){return withdrawAccount;}
 
-    public String getDepAcc(){return depositAccount;}
+    public Account getDepAcc(){return depositAccount;}
 
     public String getTimestamp(){return timestamp;}
 
@@ -30,5 +32,12 @@ public class Transaction {
 
     public String getCurrency(){return currency;}
 
+    public boolean getDone(){return done;}
 
+    public void finished(){done = true;}
+
+    @Override
+    public int compareTo(Transaction o) {
+        return this.timestamp.compareTo(o.timestamp);
+    }
 }
