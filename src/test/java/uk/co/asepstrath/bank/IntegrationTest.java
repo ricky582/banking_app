@@ -24,7 +24,7 @@ public class IntegrationTest {
                 .build();
 
         try (Response rsp = client.newCall(req).execute()) {
-            assertEquals("[{\"name\":\"Rachel\",\"balance\":50.0,\"id\":null,\"accountType\":null,\"currency\":null},{\"name\":\"Monica\",\"balance\":100.0,\"id\":null,\"accountType\":null,\"currency\":null},{\"name\":\"Phoebe\",\"balance\":76.0,\"id\":null,\"accountType\":null,\"currency\":null},{\"name\":\"Joey\",\"balance\":23.9,\"id\":null,\"accountType\":null,\"currency\":null},{\"name\":\"Chandler\",\"balance\":3.0,\"id\":null,\"accountType\":null,\"currency\":null},{\"name\":\"Ross\",\"balance\":54.32,\"id\":null,\"accountType\":null,\"currency\":null}]", rsp.body().string());
+            assertEquals("[{\"name\":\"Rachel\",\"balance\":50.0,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true},{\"name\":\"Monica\",\"balance\":100.0,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true},{\"name\":\"Phoebe\",\"balance\":76.0,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true},{\"name\":\"Joey\",\"balance\":23.9,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true},{\"name\":\"Chandler\",\"balance\":3.0,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true},{\"name\":\"Ross\",\"balance\":54.32,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true}]", rsp.body().string());
             assertEquals(StatusCode.OK.value(), rsp.code());
         }
     }

@@ -12,8 +12,9 @@ public class Account {
     private boolean localAcc;
 
     public Account(String n, double amount) {
-        name = n;
-        balance = amount;
+        this.name = n;
+        this.balance = amount;
+        this.localAcc = true;
     }
 
     public Account(String id, String name, double balance, String accountType, String currency) {
@@ -22,12 +23,12 @@ public class Account {
         this.balance = balance;
         this.accountType = accountType;
         this.currency = currency;
-        localAcc = true;
+        this.localAcc = true;
     }
 
     public Account(String id){
         this.id = id;
-        localAcc = false;
+        this.localAcc = false;
     }
 
     @Override
