@@ -1,6 +1,7 @@
 package uk.co.asepstrath.bank;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class TransactionInfo {
     private double initialBal;
@@ -13,6 +14,7 @@ public class TransactionInfo {
     public TransactionInfo(Account account, ArrayList<Transaction> transactions){
         this.account = account;
         this.transactions = transactions;
+        Collections.sort(this.transactions);
         this.initialBal = account.getBalance();
     }
 
@@ -25,11 +27,25 @@ public class TransactionInfo {
     public double getCurrentBal() {
         double currentBal = initialBal;
         for(Transaction trns : transactions){
-            if (account.getID() == trns.getWidAcc()){
-                currentBal -= trns.getAmount();
+            if (account.getID() == trns.getWidAcc().getID()){
+                if (currentBal-trns.getAmount() >= 0) {
+                    currentBal -= trns.getAmount();
+                    if (!trns.getDone()) {
+                        numSuccessful++;
+                        trns.finished();
+                    }
+                }
+                else numFailed++;
             }
             else {
-                currentBal += trns.getAmount();
+                if (trns.getWidAcc().getBalance()-trns.getAmount() >= 0 || !trns.getWidAcc().getLocal()) {
+                    currentBal += trns.getAmount();
+                    if (!trns.getDone()) {
+                        numSuccessful++;
+                        trns.finished();
+                    }
+                }
+                else numFailed++;
             }
         }
         //to avoid same error from accounts
@@ -37,6 +53,14 @@ public class TransactionInfo {
         currentBal = Math.round(currentBal);
         currentBal = currentBal / 100;
         return currentBal;
+    }
+
+    public int getNumFailed() {
+        return numFailed;
+    }
+
+    public int getNumSuccessful() {
+        return numSuccessful;
     }
 }
 

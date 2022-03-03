@@ -145,7 +145,7 @@ public class Controller {
     }
 
     public ArrayList<Transaction> fetchDataTransaction() {
-        String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/team1/transactions?PageSize=10000")
+        String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/team1/transactions?PageSize=10000000")
                 .asJson()
                 .getBody());
 
@@ -153,14 +153,14 @@ public class Controller {
     }
 
     public ArrayList<Transaction> parseJsonTransaction(String responseBody) {
-        ArrayList<Transaction> accounts = new ArrayList<>();
-        JSONArray accountsData = new JSONArray(responseBody);
-        for (int i = 0; i < accountsData.length(); i++) {
-            JSONObject accountData = accountsData.getJSONObject(i);
-            accounts.add(new Transaction(accountData.getString("withdrawAccount"), accountData.getString("depositAccount"), accountData.getString("timestamp"), accountData.getString("id"), accountData.getDouble("amount"), accountData.getString("currency")));
+        ArrayList<Transaction> transactions = new ArrayList<>();
+        JSONArray transactionsData = new JSONArray(responseBody);
+        for (int i = 0; i < transactionsData.length(); i++) {
+            JSONObject accountData = transactionsData.getJSONObject(i);
+            transactions.add(new Transaction(getAccountById(accountData.getString("withdrawAccount")), getAccountById(accountData.getString("depositAccount")), accountData.getString("timestamp"), accountData.getString("id"), accountData.getDouble("amount"), accountData.getString("currency")));
         }
 
-        return accounts;
+        return transactions;
     }
 
     public ArrayList<Transaction> retrieveDataTransaction() {
@@ -178,7 +178,7 @@ public class Controller {
                 double amount = rs.getDouble("amount");
                 String currency = rs.getString("currency");
 
-                Transaction bankTransaction = new Transaction(withdrawAccount, depositAccount, timestamp, id, amount, currency);
+                Transaction bankTransaction = new Transaction(getAccountById(withdrawAccount), getAccountById(depositAccount), timestamp, id, amount, currency);
                 transactions.add(bankTransaction);
             }
             rs.close();
@@ -186,14 +186,31 @@ public class Controller {
         return transactions;
     }
 
+    public Account getAccountById(String id){
+        ArrayList<Account> accounts = retrieveData();
+        for (Account a : accounts){
+            if (id.equals(a.getID())){
+                return a;
+            }
+        }
+        return new Account(id);
+    }
+
     //transaction data by account giving information required in user story
     @GET("/transactionData/byAccount")
     public ModelAndView transactionDataAcc() {
         ArrayList<TransactionInfo> arrayListTransactionAcc = retrieveDataTransactionAcc();
         Map<String, Object> mapTest = new HashMap<>();
+        int totalSuccessful = 0;
+        for (TransactionInfo t : arrayListTransactionAcc){
+            t.getCurrentBal();
+            totalSuccessful += t.getNumSuccessful();
+        }
+        mapTest.put("transaction", "transaction");
 
-        mapTest.put("transaction", "transaction"); //CHANGE TO RIGHT DB
-        mapTest.put("user", arrayListTransactionAcc); //user shows in hbs file
+        mapTest.put("user", arrayListTransactionAcc); //users show in hbs file
+        mapTest.put("total", Integer.toString(totalSuccessful)); //total successful transactions is passed in
+
 
         return new ModelAndView("transactionDataAcc.hbs", mapTest);
     }
@@ -207,7 +224,7 @@ public class Controller {
         for (Account account : accounts){
             ArrayList<Transaction> temp = new ArrayList<>();
             for (Transaction transaction : transactions){
-                if (transaction.getWidAcc() == account.getID()){
+                if (transaction.getWidAcc().getID().equals(account.getID()) || transaction.getDepAcc().getID().equals(account.getID())){
                     temp.add(transaction);
                 }
             }

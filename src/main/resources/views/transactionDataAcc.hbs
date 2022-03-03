@@ -15,6 +15,7 @@
    </script>
 </head>
 <body>
+Total number of successful transactions: {{total}}
    <table id="example" class="display" style="width:100%">
            <thead>
                <tr>
@@ -22,6 +23,8 @@
                    <th>Account ID</th>
                    <th>Initial Balance</th>
                    <th>Current Balance</th>
+                   <th>Successful Transactions</th>
+                   <th>Failed Transactions</th>
                </tr>
            </thead>
            <tbody>
@@ -31,6 +34,8 @@
                     <td>{{account.iD}}</td>
                     <td>{{initialBal}}</td>
                     <td>{{currentBal}}</td>
+                    <td>{{numSuccessful}}</td>
+                    <td>{{numFailed}}</td>
                </tr>
            {{/user}}
            </tbody>
@@ -40,6 +45,8 @@
                    <th>Account ID</th>
                    <th>Initial Balance</th>
                    <th>Current Balance</th>
+                   <th>Successful Transactions</th>
+                   <th>Failed Transactions</th>
                </tr>
            </tfoot>
        </table>

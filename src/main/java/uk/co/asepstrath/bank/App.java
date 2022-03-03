@@ -107,8 +107,8 @@ public class App extends Jooby {
             PreparedStatement prep = connection.prepareStatement(sql);
 
             for(int x = 0; x < transac.size() ;x++) {
-                prep.setString(1, transac.get(x).getWidAcc());
-                prep.setString(2, transac.get(x).getDepAcc());
+                prep.setString(1, transac.get(x).getWidAcc().getID());
+                prep.setString(2, transac.get(x).getDepAcc().getID());
                 prep.setString(3, transac.get(x).getTimestamp());
                 prep.setString(4, transac.get(x).getId());
                 prep.setDouble(5, transac.get(x).getAmount());
