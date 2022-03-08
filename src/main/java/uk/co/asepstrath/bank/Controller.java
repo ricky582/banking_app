@@ -105,7 +105,9 @@ public class Controller {
         JSONArray accountsData = new JSONArray(responseBody);
         for (int i = 0; i < accountsData.length(); i++) {
             JSONObject accountData = accountsData.getJSONObject(i);
+
             accounts.add(new Account(accountData.getString("id"), accountData.getString("name"), accountData.getDouble("balance"), accountData.getString("accountType"), accountData.getString("currency")));
+
         }
 
         return accounts;
@@ -155,9 +157,15 @@ public class Controller {
     public ArrayList<Transaction> parseJsonTransaction(String responseBody) {
         ArrayList<Transaction> transactions = new ArrayList<>();
         JSONArray transactionsData = new JSONArray(responseBody);
+        ArrayList<String> fraud = new ArrayList<>();
+        fraud = fraudData();
+
         for (int i = 0; i < transactionsData.length(); i++) {
             JSONObject accountData = transactionsData.getJSONObject(i);
-            transactions.add(new Transaction(getAccountById(accountData.getString("withdrawAccount")), getAccountById(accountData.getString("depositAccount")), accountData.getString("timestamp"), accountData.getString("id"), accountData.getDouble("amount"), accountData.getString("currency")));
+
+           if(!fraud.contains(accountData.getString("id"))) {
+               transactions.add(new Transaction(getAccountById(accountData.getString("withdrawAccount")), getAccountById(accountData.getString("depositAccount")), accountData.getString("timestamp"), accountData.getString("id"), accountData.getDouble("amount"), accountData.getString("currency")));
+           }
         }
 
         return transactions;
@@ -232,5 +240,28 @@ public class Controller {
         }
 
         return transactionInfo;
+    }
+
+    public ArrayList<String> fraudData() {
+
+        String jsonResult = String.valueOf(Unirest.get("http://api.asep-strath.co.uk/api/Team1/fraud")
+                .header("accept", "application/json")
+                .asJson()
+                .getBody());
+        System.out.println(jsonResult);
+
+        return parseJsonId(jsonResult);
+    }
+
+    public ArrayList<String> parseJsonId(String responseBody) {
+        ArrayList<String> fraudId = new ArrayList<>();
+        JSONArray jFraudID = new JSONArray(responseBody);
+        System.out.println(jFraudID);
+
+        for (int i = 0; i < jFraudID.length(); i++) {
+            fraudId.add(jFraudID.getString(i));
+        }
+
+        return fraudId;
     }
 }
