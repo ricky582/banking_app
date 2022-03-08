@@ -248,7 +248,6 @@ public class Controller {
                 .header("accept", "application/json")
                 .asJson()
                 .getBody());
-        System.out.println(jsonResult);
 
         return parseJsonId(jsonResult);
     }
@@ -256,7 +255,6 @@ public class Controller {
     public ArrayList<String> parseJsonId(String responseBody) {
         ArrayList<String> fraudId = new ArrayList<>();
         JSONArray jFraudID = new JSONArray(responseBody);
-        System.out.println(jFraudID);
 
         for (int i = 0; i < jFraudID.length(); i++) {
             fraudId.add(jFraudID.getString(i));
