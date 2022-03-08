@@ -2,6 +2,7 @@ package uk.co.asepstrath.bank;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 
 public class TransactionInfo {
     private double initialBal;
@@ -27,7 +28,7 @@ public class TransactionInfo {
     public double getCurrentBal() {
         double currentBal = initialBal;
         for(Transaction trns : transactions){
-            if (account.getID() == trns.getWidAcc().getID()){
+            if (account.getID().equals(trns.getWidAcc().getID())){
                 if (currentBal-trns.getAmount() >= 0) {
                     currentBal -= trns.getAmount();
                     if (!trns.getDone()) {
