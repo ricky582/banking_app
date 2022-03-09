@@ -51,7 +51,10 @@ public class Controller {
         return new ModelAndView("index.hbs");
     }
 
-    @GET //@path + any extra, in this case since no argument with @get, just at @path
+
+
+
+    @GET("/api")
     @ApiResponses({
             @ApiResponse(description = "Success",responseCode = "200"),
             @ApiResponse(description = "Not Found",responseCode = "404")
@@ -60,8 +63,6 @@ public class Controller {
             summary = "Display Accounts",
             description = "Display raw array data from the hardcoded values created by this method"
     )
-
-    @GET("/api")
     public String displayAccounts() throws JsonProcessingException {
         ArrayList<Account> accounts = gatherAccounts();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -82,7 +83,7 @@ public class Controller {
         return accounts;
     }
 
-    @GET("/get")
+    @GET({"/get", "/accounts"})
     @ApiResponses({
             @ApiResponse(description = "Success",responseCode = "200"),
             @ApiResponse(description = "Not Found",responseCode = "404")
@@ -91,8 +92,6 @@ public class Controller {
             summary = "Display Hard Coded",
             description = "Display hard coded accounts on a table or throws a 404"
     )
-    
-    @GET("/accounts")
     public ModelAndView accounts() throws IOException {
         String objectOutput = displayAccounts();
 
@@ -115,8 +114,6 @@ public class Controller {
             summary = "Display All Accounts",
             description = "Display all accounts in the bank collection, kept on a table of ten which is scrollable/searchable"
     )
-
-
     public ModelAndView accountsData() {
         ArrayList<Account> arrayListAccount = retrieveData();
         Map<String, Object> mapTest = new HashMap<>();
@@ -247,8 +244,17 @@ public class Controller {
         return new Account(id);
     }
 
+
     //transaction data by account giving information required in user story
     @GET("/transactionData/byAccount")
+    @ApiResponses({
+            @ApiResponse(description = "Success",responseCode = "200"),
+            @ApiResponse(description = "Not Found",responseCode = "404")
+    })
+    @Operation(
+            summary = "Display All Transactions sorted by account",
+            description = "Display all transactions in the bank collection, kept on a table of ten which is scrollable/searchable and which is sorted by account"
+    )
     public ModelAndView transactionDataAcc() {
         ArrayList<TransactionInfo> arrayListTransactionAcc = retrieveDataTransactionAcc();
         Map<String, Object> mapTest = new HashMap<>();
