@@ -44,7 +44,6 @@ public class App extends Jooby {
         install(new HandlebarsModule());
         install(new HikariModule("mem"));
         install(new OpenAPIModule());
-        install(new OpenAPIModule());
 
         /*
         This will host any files in src/main/resources/assets on <host>/assets
