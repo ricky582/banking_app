@@ -1,7 +1,5 @@
 package uk.co.asepstrath.bank;
 
-import com.typesafe.config.ConfigException;
-
 public class Account {
 
     private String name;
@@ -9,7 +7,7 @@ public class Account {
     private String id;
     private String accountType;
     private String currency;
-    private boolean localAcc;
+    private final boolean localAcc;
 
     public Account(String n, double amount) {
         this.name = n;
@@ -34,13 +32,10 @@ public class Account {
     @Override
     public String toString()
     {
-        try {
-            if (localAcc) {
-                return String.valueOf(id + " " + name + " " + getBalance() + " " + accountType + " " + currency);
-            }
-            else return String.valueOf(id + " " + "false");
+        if (localAcc) {
+            return String.valueOf(id + " " + name + " " + getBalance() + " " + accountType + " " + currency);
         }
-        catch(NullPointerException e){return "";}
+        else return String.valueOf(id + " " + "false");
     }
 
 
@@ -62,14 +57,14 @@ public class Account {
     }
 
     public double getBalance() {
-        try {
+        if(localAcc){
             balance = balance * 100;
             balance = Math.round(balance);
             balance = balance / 100;
             return balance;
             //Doing Math.round(bal*100)/100 would return 1dp, and just returning bal had some funky math (double math not accurate)
         }
-        catch (NullPointerException e){
+        else{
             return -1;
         }
     }
