@@ -9,6 +9,8 @@ import io.jooby.annotations.GET;
 import io.jooby.annotations.Path;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
@@ -45,10 +47,16 @@ public class Controller {
      */
 
     @GET //@path + any extra, in this case since no argument with @get, just at @path
+    @ApiResponses({
+            @ApiResponse(description = "Success",responseCode = "200"),
+            @ApiResponse(description = "Not Found",responseCode = "404")
+    })
     @Operation(
             summary = "Display Accounts",
             description = "Display raw array data from the hardcoded values created by this method"
     )
+
+
     public String displayAccounts() throws JsonProcessingException {
         ArrayList<Account> accounts = gatherAccounts();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -70,6 +78,10 @@ public class Controller {
     }
 
     @GET("/get")
+    @ApiResponses({
+            @ApiResponse(description = "Success",responseCode = "200"),
+            @ApiResponse(description = "Not Found",responseCode = "404")
+    })
     @Operation(
             summary = "Display Hard Coded",
             description = "Display hard coded accounts on a table or throws a 404"
@@ -88,10 +100,16 @@ public class Controller {
     }
 
     @GET("/accountsData")
+    @ApiResponses({
+            @ApiResponse(description = "Success",responseCode = "200"),
+            @ApiResponse(description = "Not Found",responseCode = "404")
+    })
     @Operation(
             summary = "Display All Accounts",
             description = "Display all accounts in the bank collection, kept on a table of ten which is scrollable/searchable"
     )
+
+
     public ModelAndView accountsData() {
         ArrayList<Account> arrayListAccount = retrieveData();
         Map<String, Object> mapTest = new HashMap<>();
@@ -144,6 +162,10 @@ public class Controller {
     }
 
     @GET("/transactionData")
+    @ApiResponses({
+            @ApiResponse(description = "Success",responseCode = "200"),
+            @ApiResponse(description = "Not Found",responseCode = "404")
+    })
     @Operation(
             summary = "Display All Transactions",
             description = "Display all transactions in the bank collection, kept on a table of ten which is scrollable/searchable"
