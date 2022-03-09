@@ -51,7 +51,7 @@ public class Controller {
         return new ModelAndView("index.hbs");
     }
 
-    @GET //@path + any extra, in this case since no argument with @get, just at @path
+    //@path + any extra, in this case since no argument with @get, just at @path
     @ApiResponses({
             @ApiResponse(description = "Success",responseCode = "200"),
             @ApiResponse(description = "Not Found",responseCode = "404")
@@ -82,7 +82,7 @@ public class Controller {
         return accounts;
     }
 
-    @GET("/get")
+    @GET({"/get", "/accounts"})
     @ApiResponses({
             @ApiResponse(description = "Success",responseCode = "200"),
             @ApiResponse(description = "Not Found",responseCode = "404")
@@ -91,8 +91,7 @@ public class Controller {
             summary = "Display Hard Coded",
             description = "Display hard coded accounts on a table or throws a 404"
     )
-    
-    @GET("/accounts")
+
     public ModelAndView accounts() throws IOException {
         String objectOutput = displayAccounts();
 
