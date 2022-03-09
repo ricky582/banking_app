@@ -102,8 +102,8 @@ class AccountsTest {
         Account a = new Account("1234");
         Account b = new Account("5678", "test", 100.76, "Test", "GBP");
         Account NULL = null;
-        Assertions.assertEquals(a.toString(), "1234 false", a.toString());
-        Assertions.assertEquals(b.toString(), "5678 test 100.76 Test GBP",b.toString());
+        Assertions.assertEquals("1234 false", a.toString());
+        Assertions.assertEquals("5678 test 100.76 Test GBP",b.toString());
         Assertions.assertThrows(NullPointerException.class, () -> NULL.toString());
     }
 }

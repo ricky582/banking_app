@@ -2,7 +2,6 @@ package uk.co.asepstrath.bank;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Objects;
 
 public class TransactionInfo {
     private double initialBal;
@@ -27,27 +26,23 @@ public class TransactionInfo {
 
     public double getCurrentBal() {
         double currentBal = initialBal;
-        for(Transaction trns : transactions){
-            if (account.getID().equals(trns.getWidAcc().getID())){
-                if (currentBal-trns.getAmount() >= 0) {
-                    currentBal -= trns.getAmount();
-                    if (!trns.getDone()) {
-                        numSuccessful++;
-                        trns.finished();
-                    }
+        for(Transaction trns : transactions) {
+            if (account.getID().equals(trns.getWidAcc().getID()) && currentBal - trns.getAmount() >= 0) {
+
+                currentBal -= trns.getAmount();
+                if (!trns.getDone()) {
+                    numSuccessful++;
+                    trns.finished();
                 }
-                else numFailed++;
-            }
-            else {
-                if (trns.getWidAcc().getBalance()-trns.getAmount() >= 0 || !trns.getWidAcc().getLocal()) {
-                    currentBal += trns.getAmount();
-                    if (!trns.getDone()) {
-                        numSuccessful++;
-                        trns.finished();
-                    }
+            } else if (trns.getWidAcc().getBalance() - trns.getAmount() >= 0 || !trns.getWidAcc().getLocal()) {
+
+                currentBal += trns.getAmount();
+                if (!trns.getDone()) {
+                    numSuccessful++;
+                    trns.finished();
                 }
-                else numFailed++;
             }
+            else numFailed++;
         }
         //to avoid same error from accounts
         currentBal = currentBal * 100;
