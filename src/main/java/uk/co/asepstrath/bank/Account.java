@@ -40,20 +40,15 @@ public class Account {
 
 
     public void deposit(double amount) {
-        try{
-            balance += amount;
-        }
-        catch(NullPointerException e){}
+        balance += amount;
     }
 
     public void withdraw(double amount) throws ArithmeticException {
-        try {
-            if (amount > balance) {
-                throw new ArithmeticException();
-            }
-            balance -= amount;
+        if (amount > balance) {
+            throw new ArithmeticException();
         }
-        catch(NullPointerException e){}
+        balance -= amount;
+
     }
 
     public double getBalance() {
