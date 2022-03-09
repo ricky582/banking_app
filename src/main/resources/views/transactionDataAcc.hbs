@@ -15,37 +15,38 @@
    </script>
 </head>
 <body>
+Total number of successful transactions: {{total}}
    <table id="example" class="display" style="width:100%">
            <thead>
                <tr>
-                   <th>Withdraw Account</th>
-                   <th>Deposit Account</th>
-                   <th>Timestamp</th>
-                   <th>ID</th>
-                   <th>Amount</th>
-                   <th>Currency</th>
+                   <th>Name on Account</th>
+                   <th>Account ID</th>
+                   <th>Initial Balance</th>
+                   <th>Current Balance</th>
+                   <th>Successful Transactions</th>
+                   <th>Failed Transactions</th>
                </tr>
            </thead>
            <tbody>
-           {{#transac}}
+           {{#user}}
                <tr>
-                    <td>{{widAcc.iD}}</td>
-                    <td>{{depAcc.iD}}</td>
-                    <td>{{timestamp}}</td>
-                    <td>{{id}}</td>
-                    <td>{{amount}}</td>
-                    <td>{{currency}}</td>
+                    <td>{{account.name}}</td>
+                    <td>{{account.iD}}</td>
+                    <td>{{initialBal}}</td>
+                    <td>{{currentBal}}</td>
+                    <td>{{numSuccessful}}</td>
+                    <td>{{numFailed}}</td>
                </tr>
-           {{/transac}}
+           {{/user}}
            </tbody>
            <tfoot>
                <tr>
-                   <th>Withdraw Account</th>
-                   <th>Deposit Account</th>
-                   <th>Timestamp</th>
-                   <th>ID</th>
-                   <th>Amount</th>
-                   <th>Currency</th>
+                   <th>Name on Account</th>
+                   <th>Account ID</th>
+                   <th>Initial Balance</th>
+                   <th>Current Balance</th>
+                   <th>Successful Transactions</th>
+                   <th>Failed Transactions</th>
                </tr>
            </tfoot>
        </table>

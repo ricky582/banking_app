@@ -7,10 +7,12 @@ public class Account {
     private String id;
     private String accountType;
     private String currency;
+    private final boolean localAcc;
 
     public Account(String n, double amount) {
-        name = n;
-        balance = amount;
+        this.name = n;
+        this.balance = amount;
+        this.localAcc = true;
     }
 
     public Account(String id, String name, double balance, String accountType, String currency) {
@@ -19,12 +21,21 @@ public class Account {
         this.balance = balance;
         this.accountType = accountType;
         this.currency = currency;
+        this.localAcc = true;
+    }
+
+    public Account(String id){
+        this.id = id;
+        this.localAcc = false;
     }
 
     @Override
     public String toString()
     {
-        return String.valueOf(id + " " + name + " " + getBalance() + " " + accountType + " " + currency);
+        if (localAcc) {
+            return String.valueOf(id + " " + name + " " + getBalance() + " " + accountType + " " + currency);
+        }
+        else return String.valueOf(id + " " + "false");
     }
 
 
@@ -36,21 +47,26 @@ public class Account {
         if (amount > balance) {
             throw new ArithmeticException();
         }
-
         balance -= amount;
+
     }
 
     public double getBalance() {
-        balance = balance * 100;
-        balance = Math.round(balance);
-        balance = balance / 100;
-        return balance;
-
-        //Doing Math.round(bal*100)/100 would return 1dp, and just returning bal had some funky math (double math not accurate)
+        if(localAcc){
+            balance = balance * 100;
+            balance = Math.round(balance);
+            balance = balance / 100;
+            return balance;
+            //Doing Math.round(bal*100)/100 would return 1dp, and just returning bal had some funky math (double math not accurate)
+        }
+        else{
+            return -1;
+        }
     }
 
     public String getName() {
-        return name;
+        if (localAcc) return name;
+        else return "";
     }
 
     public String getID() {
@@ -58,10 +74,14 @@ public class Account {
     }
 
     public String getAccountType() {
-        return accountType;
+        if (localAcc) return accountType;
+        else return "External";
     }
 
     public String getCurrency() {
-        return currency;
+        if (localAcc) return currency;
+        else return "";
     }
+
+    public boolean getLocal() {return localAcc;}
 }

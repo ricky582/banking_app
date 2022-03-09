@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 //Path = IP/argument, i.e("localhost:8080/accounts)
-@Path("/accounts")
+@Path("/")
 public class Controller {
 
     private static HttpURLConnection urlConn;
@@ -46,6 +46,11 @@ public class Controller {
         This request makes a call to the passed in data source (The Database) which has been set up in App.java
      */
 
+    @GET("/")
+    public ModelAndView index() {
+        return new ModelAndView("index.hbs");
+    }
+
     @GET //@path + any extra, in this case since no argument with @get, just at @path
     @ApiResponses({
             @ApiResponse(description = "Success",responseCode = "200"),
@@ -56,7 +61,7 @@ public class Controller {
             description = "Display raw array data from the hardcoded values created by this method"
     )
 
-
+    @GET("/api")
     public String displayAccounts() throws JsonProcessingException {
         ArrayList<Account> accounts = gatherAccounts();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -86,6 +91,8 @@ public class Controller {
             summary = "Display Hard Coded",
             description = "Display hard coded accounts on a table or throws a 404"
     )
+    
+    @GET("/accounts")
     public ModelAndView accounts() throws IOException {
         String objectOutput = displayAccounts();
 
@@ -133,7 +140,9 @@ public class Controller {
         JSONArray accountsData = new JSONArray(responseBody);
         for (int i = 0; i < accountsData.length(); i++) {
             JSONObject accountData = accountsData.getJSONObject(i);
+
             accounts.add(new Account(accountData.getString("id"), accountData.getString("name"), accountData.getDouble("balance"), accountData.getString("accountType"), accountData.getString("currency")));
+
         }
 
         return accounts;
@@ -189,14 +198,20 @@ public class Controller {
     }
 
     public ArrayList<Transaction> parseJsonTransaction(String responseBody) {
-        ArrayList<Transaction> accounts = new ArrayList<>();
-        JSONArray accountsData = new JSONArray(responseBody);
-        for (int i = 0; i < accountsData.length(); i++) {
-            JSONObject accountData = accountsData.getJSONObject(i);
-            accounts.add(new Transaction(accountData.getString("withdrawAccount"), accountData.getString("depositAccount"), accountData.getString("timestamp"), accountData.getString("id"), accountData.getDouble("amount"), accountData.getString("currency")));
+        ArrayList<Transaction> transactions = new ArrayList<>();
+        JSONArray transactionsData = new JSONArray(responseBody);
+        ArrayList<String> fraud = new ArrayList<>();
+        fraud = fraudData();
+
+        for (int i = 0; i < transactionsData.length(); i++) {
+            JSONObject accountData = transactionsData.getJSONObject(i);
+
+           if(!fraud.contains(accountData.getString("id"))) {
+               transactions.add(new Transaction(getAccountById(accountData.getString("withdrawAccount")), getAccountById(accountData.getString("depositAccount")), accountData.getString("timestamp"), accountData.getString("id"), accountData.getDouble("amount"), accountData.getString("currency")));
+           }
         }
 
-        return accounts;
+        return transactions;
     }
 
     public ArrayList<Transaction> retrieveDataTransaction() {
@@ -214,11 +229,80 @@ public class Controller {
                 double amount = rs.getDouble("amount");
                 String currency = rs.getString("currency");
 
-                Transaction bankTransaction = new Transaction(withdrawAccount, depositAccount, timestamp, id, amount, currency);
+                Transaction bankTransaction = new Transaction(getAccountById(withdrawAccount), getAccountById(depositAccount), timestamp, id, amount, currency);
                 transactions.add(bankTransaction);
             }
             rs.close();
         } catch (SQLException e) {}
         return transactions;
+    }
+
+    public Account getAccountById(String id){
+        ArrayList<Account> accounts = retrieveData();
+        for (Account a : accounts){
+            if (id.equals(a.getID())){
+                return a;
+            }
+        }
+        return new Account(id);
+    }
+
+    //transaction data by account giving information required in user story
+    @GET("/transactionData/byAccount")
+    public ModelAndView transactionDataAcc() {
+        ArrayList<TransactionInfo> arrayListTransactionAcc = retrieveDataTransactionAcc();
+        Map<String, Object> mapTest = new HashMap<>();
+        int totalSuccessful = 0;
+        for (TransactionInfo t : arrayListTransactionAcc){
+            t.getCurrentBal();
+            totalSuccessful += t.getNumSuccessful();
+        }
+        mapTest.put("transaction", "transaction");
+
+        mapTest.put("user", arrayListTransactionAcc); //users show in hbs file
+        mapTest.put("total", Integer.toString(totalSuccessful)); //total successful transactions is passed in
+
+
+        return new ModelAndView("transactionDataAcc.hbs", mapTest);
+    }
+
+
+    public ArrayList<TransactionInfo> retrieveDataTransactionAcc() {
+        ArrayList<Transaction> transactions = retrieveDataTransaction();
+        ArrayList<Account> accounts = retrieveData();
+        ArrayList<TransactionInfo> transactionInfo = new ArrayList<>();
+
+        for (Account account : accounts){
+            ArrayList<Transaction> temp = new ArrayList<>();
+            for (Transaction transaction : transactions){
+                if (transaction.getWidAcc().getID().equals(account.getID()) || transaction.getDepAcc().getID().equals(account.getID())){
+                    temp.add(transaction);
+                }
+            }
+            transactionInfo.add(new TransactionInfo(account, temp));
+        }
+
+        return transactionInfo;
+    }
+
+    public ArrayList<String> fraudData() {
+
+        String jsonResult = String.valueOf(Unirest.get("http://api.asep-strath.co.uk/api/Team1/fraud")
+                .header("accept", "application/json")
+                .asJson()
+                .getBody());
+
+        return parseJsonId(jsonResult);
+    }
+
+    public ArrayList<String> parseJsonId(String responseBody) {
+        ArrayList<String> fraudId = new ArrayList<>();
+        JSONArray jFraudID = new JSONArray(responseBody);
+
+        for (int i = 0; i < jFraudID.length(); i++) {
+            fraudId.add(jFraudID.getString(i));
+        }
+
+        return fraudId;
     }
 }

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<head>
+   <meta charset="utf-8">
+   <title></title>
+   <meta name="description" content="">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <title>Bank — Index</title>
+   <script src="https://cdn.tailwindcss.com"></script>
+   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;500;700&display=swap" as="style" onload="this.onload=null; this.rel='stylesheet'" />
+   <noscript>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;500;700&display=swap"
+            rel="stylesheet"
+            type="text/css"
+        />
+   </noscript>
+   <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+         fontFamily: {
+            'sans': ['Inter'],
+         },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="flex flex-col justify-center items-center h-screen w-screen">
+   <div class="left-area flex flex-col w-3/5">
+      <div class="text-div w-3/5">
+         <h1 class="text-7xl font-bold text-green-900">Payments & treasury infrastructure for the internet.</h1>
+      </div>
+      <div class="para-div justify-self-start mt-4">
+         <p class="text-2xl font-normal text-stone-900">
+            We do stuff. We are a bank.
+         </p>
+      </div>
+   </div>
+   <div class="right-area flex flex-col mt-20 w-3/5">
+      <div class="flex flex-col link-area justify-self-start">
+         <a class="hover:text-green-900" href="http://localhost:8080/api">/api</a>
+         <a class="hover:text-green-900" href="http://localhost:8080/accounts">/accounts</a>
+         <a class="hover:text-green-900" href="http://localhost:8080/accountsData">/accountsData</a>
+         <a class="hover:text-green-900" href="http://localhost:8080/transactionData">/transactionData</a>
+      </div>
+   </div>
+</body>
+</html>

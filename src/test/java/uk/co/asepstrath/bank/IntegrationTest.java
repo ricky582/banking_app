@@ -1,5 +1,7 @@
 package uk.co.asepstrath.bank;
 
+import io.jooby.exception.StartupException;
+import org.junit.jupiter.api.Assertions;
 import uk.co.asepstrath.bank.App;
 import io.jooby.JoobyTest;
 import io.jooby.StatusCode;
@@ -9,30 +11,56 @@ import okhttp3.Response;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.BindException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @JoobyTest(App.class)
-public class IntegrationTest {
+class IntegrationTest {
 
     static OkHttpClient client = new OkHttpClient();
 
     @Test
-    public void shouldDisplayValue(int serverPort) throws IOException {
+    void testAllRunning(int serverPort) throws IOException {
+        Request req = new Request.Builder().url("http://localhost:" + serverPort + "/").build();
+        Response rsp = client.newCall(req).execute();
+        assertEquals(StatusCode.OK.value(), rsp.code());
+        req = new Request.Builder().url("http://localhost:" + serverPort + "/api").build();
+        rsp = client.newCall(req).execute();
+        assertEquals(StatusCode.OK.value(), rsp.code());
+        req = new Request.Builder().url("http://localhost:" + serverPort + "/api").build();
+        rsp = client.newCall(req).execute();
+        assertEquals(StatusCode.OK.value(), rsp.code());
+        req = new Request.Builder().url("http://localhost:" + serverPort + "/accounts").build();
+        rsp = client.newCall(req).execute();
+        assertEquals(StatusCode.OK.value(), rsp.code());
+        req = new Request.Builder().url("http://localhost:" + serverPort + "/accountsData").build();
+        rsp = client.newCall(req).execute();
+        assertEquals(StatusCode.OK.value(), rsp.code());
+        req = new Request.Builder().url("http://localhost:" + serverPort + "/transactionData").build();
+        rsp = client.newCall(req).execute();
+        assertEquals(StatusCode.OK.value(), rsp.code());
+        req = new Request.Builder().url("http://localhost:" + serverPort + "/transactionData/byAccount").build();
+        rsp = client.newCall(req).execute();
+        assertEquals(StatusCode.OK.value(), rsp.code());
+    }
+
+    @Test
+    void apiTest(int serverPort) throws IOException {
         Request req = new Request.Builder()
-                .url("http://localhost:" + serverPort + "/accounts")
+                .url("http://localhost:" + serverPort + "/api")
                 .build();
 
         try (Response rsp = client.newCall(req).execute()) {
-            assertEquals("[{\"name\":\"Rachel\",\"balance\":50.0},{\"name\":\"Monica\",\"balance\":100.0},{\"name\":\"Phoebe\",\"balance\":76.0},{\"name\":\"Joey\",\"balance\":23.9},{\"name\":\"Chandler\",\"balance\":3.0},{\"name\":\"Ross\",\"balance\":54.32}]", rsp.body().string());
+            assertEquals("[{\"name\":\"Rachel\",\"balance\":50.0,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true},{\"name\":\"Monica\",\"balance\":100.0,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true},{\"name\":\"Phoebe\",\"balance\":76.0,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true},{\"name\":\"Joey\",\"balance\":23.9,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true},{\"name\":\"Chandler\",\"balance\":3.0,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true},{\"name\":\"Ross\",\"balance\":54.32,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true}]", rsp.body().string());
             assertEquals(StatusCode.OK.value(), rsp.code());
         }
     }
 
     @Test
-    public void showAccount(int serverPort) throws IOException {
+    void accountTest(int serverPort) throws IOException {
         Request req = new Request.Builder()
-                .url("http://localhost:" + serverPort + "/accounts/get")
+                .url("http://localhost:" + serverPort + "/accounts")
                 .build();
 
         try (Response rsp = client.newCall(req).execute()) {
