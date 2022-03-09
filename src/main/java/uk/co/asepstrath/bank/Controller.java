@@ -16,10 +16,12 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
 
 //Path = IP/argument, i.e("localhost:8080/accounts)
 @Path("/")
@@ -262,4 +264,42 @@ public class Controller {
 
         return fraudId;
     }
+
+    public ArrayList<Transaction> repeatTransaction() {
+        String tempId = "12ac7766-c511-400d-9651-d85166e3eab2";
+        SimpleDateFormat newDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date newDate = new Date();
+        ArrayList<Transaction> tranList = retrieveDataTransaction();
+
+        for (int i = 0; i < tranList.size(); i++) {
+            if (tranList.get(i).getId().equals(tempId)) {
+                try (Connection connection = dataSource.getConnection()) {
+
+                    Statement stmt = connection.createStatement();
+
+                    String sql = "INSERT INTO transactions (withdrawAccount, depositAccount, timestamp, id, amount, currency) "
+                            + "VALUES (?,?,?,?,?,?)";
+
+                    PreparedStatement prep = connection.prepareStatement(sql);
+
+                    prep.setString(1, tranList.get(i).getWidAcc().getID());
+                    prep.setString(2, tranList.get(i).getDepAcc().getID());
+                    prep.setString(3, newDateFormat.format(newDate));
+                    prep.setString(4,tranList.get(i).getId()+1);
+                    prep.setDouble(5, tranList.get(i).getAmount());
+                    prep.setString(6, tranList.get(i).getCurrency());
+
+                    prep.executeUpdate();
+
+                    prep.close();
+                    stmt.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
+
+        return tranList;
+    }
+
+
 }
