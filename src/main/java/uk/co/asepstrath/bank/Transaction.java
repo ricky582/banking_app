@@ -34,7 +34,6 @@ public class Transaction implements Comparable<Transaction> {
 
     public boolean getDone(){return done;}
 
-
     public void finished(){done = true;}
 
     @Override

@@ -74,11 +74,9 @@ public class App extends Jooby {
     public void onStart() {
         Logger log = getLog();
         log.info("Starting Up...");
-
         DataSource ds = require(DataSource.class);
         Controller control1 = new Controller(ds,log);
         ArrayList<Account> acc = control1.fetchData();
-
         // Open Connection to DB
         try (Connection connection = ds.getConnection()) {
             //Populate The Database
@@ -89,14 +87,10 @@ public class App extends Jooby {
                     + " balance decimal NOT NULL,\n"
                     + " accountType text NOT NULL,\n"
                     + " currency text NOT NULL);";
-
             stmt.execute(sql);
-
             sql = "INSERT INTO accounts (id, name, balance, accountType, currency) "
                     + "VALUES (?,?,?,?,?)";
-
             PreparedStatement prep = connection.prepareStatement(sql);
-
             for(int x = 0; x < acc.size() ;x++) {
                 prep.setString(1, acc.get(x).getID());
                 prep.setString(2, acc.get(x).getName());
@@ -105,7 +99,6 @@ public class App extends Jooby {
                 prep.setString(5, acc.get(x).getCurrency());
                 prep.executeUpdate();
             }
-
             prep.close();
             stmt.close();
         } catch (SQLException e) {
@@ -125,14 +118,10 @@ public class App extends Jooby {
                     + " id varchar(50) PRIMARY KEY,\n"
                     + " amount decimal NOT NULL,\n"
                     + " currency text NOT NULL);";
-
             stmt.execute(sql);
-
             sql = "INSERT INTO transactions (withdrawAccount, depositAccount, timestamp, id, amount, currency) "
                     + "VALUES (?,?,?,?,?,?)";
-
             PreparedStatement prep = connection.prepareStatement(sql);
-
             for(int x = 0; x < transac.size() ;x++) {
                 prep.setString(1, transac.get(x).getWidAcc().getID());
                 prep.setString(2, transac.get(x).getDepAcc().getID());
@@ -142,7 +131,6 @@ public class App extends Jooby {
                 prep.setString(6, transac.get(x).getCurrency());
                 prep.executeUpdate();
             }
-
             prep.close();
             stmt.close();
         } catch (SQLException e) {
