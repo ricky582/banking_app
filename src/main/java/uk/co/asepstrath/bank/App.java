@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 
+
 public class App extends Jooby {
 
     {
@@ -122,7 +123,7 @@ public class App extends Jooby {
             log.error("Database Creation Error", e);
         }
 
-        control1.repeatTransaction();
+
     }
     public void onStop() {
         System.out.println("Shutting Down...");

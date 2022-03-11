@@ -3,14 +3,16 @@ package uk.co.asepstrath.bank;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jooby.MediaType;
 import io.jooby.ModelAndView;
 import io.jooby.Jooby;
-import io.jooby.annotations.GET;
-import io.jooby.annotations.Path;
+import io.jooby.annotations.*;
+import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 import org.slf4j.Logger;
+
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -265,14 +267,20 @@ public class Controller {
         return fraudId;
     }
 
-    public ArrayList<Transaction> repeatTransaction() {
-        String tempId = "12ac7766-c511-400d-9651-d85166e3eab2";
+    @Path("/transactionData/")
+    @GET
+    @Produces(MediaType.TEXT)
+    public void getTransId(@QueryParam("id") String transactionid) {
+       repeatTransaction(transactionid);
+    }
+
+    public ArrayList<Transaction> repeatTransaction(String transactionid) {
+
         SimpleDateFormat newDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         Date newDate = new Date();
         ArrayList<Transaction> tranList = retrieveDataTransaction();
-
         for (int i = 0; i < tranList.size(); i++) {
-            if (tranList.get(i).getId().equals(tempId)) {
+            if (tranList.get(i).getId().equals(transactionid)) {
                 try (Connection connection = dataSource.getConnection()) {
 
                     Statement stmt = connection.createStatement();
@@ -291,6 +299,7 @@ public class Controller {
 
                     prep.executeUpdate();
 
+
                     prep.close();
                     stmt.close();
                 } catch (SQLException e) {
@@ -300,6 +309,5 @@ public class Controller {
 
         return tranList;
     }
-
 
 }
