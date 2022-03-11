@@ -8,7 +8,6 @@ import io.jooby.Jooby;
 import io.jooby.annotations.GET;
 import io.jooby.annotations.Path;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kong.unirest.Unirest;
