@@ -21,51 +21,33 @@ class IntegrationTest {
     static OkHttpClient client = new OkHttpClient();
 
     @Test
-    void testAllRunning(int serverPort) throws IOException {
+    void testStatusCode(int serverPort) throws IOException {
         Request req = new Request.Builder().url("http://localhost:" + serverPort + "/").build();
         Response rsp = client.newCall(req).execute();
         assertEquals(StatusCode.OK.value(), rsp.code());
+
         req = new Request.Builder().url("http://localhost:" + serverPort + "/api").build();
         rsp = client.newCall(req).execute();
         assertEquals(StatusCode.OK.value(), rsp.code());
+
         req = new Request.Builder().url("http://localhost:" + serverPort + "/api").build();
         rsp = client.newCall(req).execute();
         assertEquals(StatusCode.OK.value(), rsp.code());
+
         req = new Request.Builder().url("http://localhost:" + serverPort + "/accounts").build();
         rsp = client.newCall(req).execute();
         assertEquals(StatusCode.OK.value(), rsp.code());
+
         req = new Request.Builder().url("http://localhost:" + serverPort + "/accountsData").build();
         rsp = client.newCall(req).execute();
         assertEquals(StatusCode.OK.value(), rsp.code());
+
         req = new Request.Builder().url("http://localhost:" + serverPort + "/transactionData").build();
         rsp = client.newCall(req).execute();
         assertEquals(StatusCode.OK.value(), rsp.code());
+
         req = new Request.Builder().url("http://localhost:" + serverPort + "/transactionData/byAccount").build();
         rsp = client.newCall(req).execute();
         assertEquals(StatusCode.OK.value(), rsp.code());
-    }
-
-    @Test
-    void apiTest(int serverPort) throws IOException {
-        Request req = new Request.Builder()
-                .url("http://localhost:" + serverPort + "/api")
-                .build();
-
-        try (Response rsp = client.newCall(req).execute()) {
-            assertEquals("[{\"name\":\"Rachel\",\"balance\":50.0,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true},{\"name\":\"Monica\",\"balance\":100.0,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true},{\"name\":\"Phoebe\",\"balance\":76.0,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true},{\"name\":\"Joey\",\"balance\":23.9,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true},{\"name\":\"Chandler\",\"balance\":3.0,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true},{\"name\":\"Ross\",\"balance\":54.32,\"id\":null,\"accountType\":null,\"currency\":null,\"local\":true}]", rsp.body().string());
-            assertEquals(StatusCode.OK.value(), rsp.code());
-        }
-    }
-
-    @Test
-    void accountTest(int serverPort) throws IOException {
-        Request req = new Request.Builder()
-                .url("http://localhost:" + serverPort + "/accounts")
-                .build();
-
-        try (Response rsp = client.newCall(req).execute()) {
-            assertEquals("<!DOCTYPE html><head> <meta charset=\"utf-8\"> <title></title> <meta name=\"description\" content=\"\"> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <title>GET Endpoint — Test</title></head><body> <table> <tr> <th>First Name</th> <th>Balance</th> </tr><tr> <td>Rachel</td><td>50.0</td></tr><tr> <td>Monica</td><td>100.0</td></tr><tr> <td>Phoebe</td><td>76.0</td></tr><tr> <td>Joey</td><td>23.9</td></tr><tr> <td>Chandler</td><td>3.0</td></tr><tr> <td>Ross</td><td>54.32</td></tr></table></body></html>", rsp.body().string());
-            assertEquals(StatusCode.OK.value(), rsp.code());
-        }
     }
 }
