@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class TransactionInfo {
-    private double initialBal;
-    private Account account;
-    private ArrayList<Transaction> transactions;
-    //for second half of user story
-    private int numSuccessful;
-    private int numFailed;
+    private final double initialBal;                  //initial balance before any transactions are done
+    private final Account account;                    //account we want the transaction info for (note that only local accounts can have transactionInfo objects
+    private ArrayList<Transaction> transactions;      //list of all transactions associated with account
+    private int numSuccessful;                        //number of successful transactions
+    private int numFailed;                            //number of failed transactions
 
+    //main constructor
     public TransactionInfo(Account account, ArrayList<Transaction> transactions){
         this.account = account;
         this.transactions = transactions;
@@ -18,15 +18,19 @@ public class TransactionInfo {
         this.initialBal = account.getBalance();
     }
 
+    //getter for account
     public Account getAccount() {return account;}
 
+    //returns all transactions
     public ArrayList<Transaction> getTransactions() {return transactions;}
 
+    //returns the initial balance
     public double getInitialBal() {return initialBal;}
 
+    //returns current balance - note that for now the actual balance of account does not change - it is all done artificially
     public double getCurrentBal() {
-        double currentBal = initialBal;
-        for(Transaction trns : transactions) {
+        double currentBal = initialBal; //start at initial balance of account
+        for(Transaction trns : transactions) { //attempts to do all transactions in list with the appropriate checks
             if (account.getID().equals(trns.getWidAcc().getID()) && currentBal - trns.getAmount() >= 0) {
                 currentBal -= trns.getAmount();
                 if (!trns.getDone()) {
@@ -42,17 +46,15 @@ public class TransactionInfo {
             }
             else numFailed++;
         }
-        //to avoid same error from accounts
-        currentBal = currentBal * 100;
-        currentBal = Math.round(currentBal);
-        currentBal = currentBal / 100;
-        return currentBal;
+        return Math.round(currentBal*100.00)/100.00;
     }
 
+    //getter for numFailed
     public int getNumFailed() {
         return numFailed;
     }
 
+    //getter for numSuccessful
     public int getNumSuccessful() {
         return numSuccessful;
     }
