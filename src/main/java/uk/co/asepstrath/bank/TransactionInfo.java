@@ -28,14 +28,12 @@ public class TransactionInfo {
         double currentBal = initialBal;
         for(Transaction trns : transactions) {
             if (account.getID().equals(trns.getWidAcc().getID()) && currentBal - trns.getAmount() >= 0) {
-
                 currentBal -= trns.getAmount();
                 if (!trns.getDone()) {
                     numSuccessful++;
                     trns.finished();
                 }
             } else if (trns.getWidAcc().getBalance() - trns.getAmount() >= 0 || !trns.getWidAcc().getLocal()) {
-
                 currentBal += trns.getAmount();
                 if (!trns.getDone()) {
                     numSuccessful++;

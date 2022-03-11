@@ -8,7 +8,6 @@ import io.jooby.Jooby;
 import io.jooby.annotations.GET;
 import io.jooby.annotations.Path;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kong.unirest.Unirest;
@@ -36,7 +35,6 @@ public class Controller {
     /*
         This constructor can take in any dependencies the controller may need to respond to a request
      */
-
     public Controller(DataSource ds, Logger log) {
         dataSource = ds;
         logger = log;
@@ -45,64 +43,11 @@ public class Controller {
     /*
         This request makes a call to the passed in data source (The Database) which has been set up in App.java
      */
-
     @GET("/")
     public ModelAndView index() {
         return new ModelAndView("index.hbs");
     }
 
-
-    @GET("/api")
-    @ApiResponses({
-            @ApiResponse(description = "Success",responseCode = "200"),
-            @ApiResponse(description = "Not Found",responseCode = "404")
-    })
-    @Operation(
-            summary = "Display Accounts",
-            description = "Display raw array data from the hardcoded values created by this method"
-    )
-    public String displayAccounts() throws JsonProcessingException {
-        ArrayList<Account> accounts = gatherAccounts();
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        return objectMapper.writeValueAsString(accounts);
-    }
-
-
-    public ArrayList<Account> gatherAccounts() {
-        ArrayList<Account> accounts = new ArrayList<>();
-        accounts.add(new Account("Rachel", 50));
-        accounts.add(new Account("Monica", 100.00));
-        accounts.add(new Account("Phoebe", 76));
-        accounts.add(new Account("Joey", 23.90));
-        accounts.add(new Account("Chandler", 3.00));
-        accounts.add(new Account("Ross", 54.32));
-
-        return accounts;
-    }
-
-    @GET({"/get", "/accounts"})
-    @ApiResponses({
-            @ApiResponse(description = "Success",responseCode = "200"),
-            @ApiResponse(description = "Not Found",responseCode = "404")
-    })
-    @Operation(
-            summary = "Display Hard Coded",
-            description = "Display hard coded accounts on a table or throws a 404"
-    )
-    
-    public ModelAndView accounts() throws IOException {
-        String objectOutput = displayAccounts();
-
-        ObjectMapper mapper = new ObjectMapper();
-        List<Map<String, Object>> listData = mapper.readValue(objectOutput, new TypeReference<List<Map<String, Object>>>(){});
-
-        Map<String, Object> mapTest = new HashMap<>();
-        mapTest.put("accounts", "accounts");
-        mapTest.put("user", listData);
-
-        return new ModelAndView("accounts.hbs", mapTest);
-    }
 
     @GET("/accountsData")
     @ApiResponses({
@@ -116,10 +61,8 @@ public class Controller {
     public ModelAndView accountsData() {
         ArrayList<Account> arrayListAccount = retrieveData();
         Map<String, Object> mapTest = new HashMap<>();
-
         mapTest.put("accounts", "accounts");
         mapTest.put("user", arrayListAccount);
-
         return new ModelAndView("accountsData.hbs", mapTest);
     }
 
@@ -127,7 +70,6 @@ public class Controller {
         String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/Team1/accounts")
                 .asJson()
                 .getBody());
-
         return parseJson(jsonResult);
     }
 
@@ -136,11 +78,12 @@ public class Controller {
         JSONArray accountsData = new JSONArray(responseBody);
         for (int i = 0; i < accountsData.length(); i++) {
             JSONObject accountData = accountsData.getJSONObject(i);
-
-            accounts.add(new Account(accountData.getString("id"), accountData.getString("name"), accountData.getDouble("balance"), accountData.getString("accountType"), accountData.getString("currency")));
-
+            accounts.add(new Account(accountData.getString("id"),
+                                     accountData.getString("name"),
+                                     accountData.getDouble("balance"),
+                                     accountData.getString("accountType"),
+                                     accountData.getString("currency")));
         }
-
         return accounts;
     }
 
@@ -150,14 +93,12 @@ public class Controller {
             Statement stmt = connection.createStatement();
             String sql = "SELECT * FROM accounts";
             ResultSet rs = stmt.executeQuery(sql);
-
             while (rs.next()) {
                 String id = rs.getString("id");
                 String name = rs.getString("name");
                 double balance = rs.getDouble("balance");
                 String accountType = rs.getString("accountType");
                 String currency = rs.getString("currency");
-
                 Account bankUser = new Account(id, name, balance, accountType, currency);
                 accounts.add(bankUser);
             }
@@ -178,10 +119,8 @@ public class Controller {
     public ModelAndView transactionData() {
         ArrayList<Transaction> arrayListTransaction = retrieveDataTransaction();
         Map<String, Object> mapTest = new HashMap<>();
-
         mapTest.put("transaction", "transaction");
         mapTest.put("transac", arrayListTransaction);
-
         return new ModelAndView("transactionData.hbs", mapTest);
     }
 
@@ -189,24 +128,20 @@ public class Controller {
         String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/team1/transactions?PageSize=10000")
                 .asJson()
                 .getBody());
-
         return parseJsonTransaction(jsonResult);
     }
 
     public ArrayList<Transaction> parseJsonTransaction(String responseBody) {
         ArrayList<Transaction> transactions = new ArrayList<>();
         JSONArray transactionsData = new JSONArray(responseBody);
-        ArrayList<String> fraud = new ArrayList<>();
+        ArrayList<String> fraud;
         fraud = fraudData();
-
         for (int i = 0; i < transactionsData.length(); i++) {
             JSONObject accountData = transactionsData.getJSONObject(i);
-
            if(!fraud.contains(accountData.getString("id"))) {
                transactions.add(new Transaction(getAccountById(accountData.getString("withdrawAccount")), getAccountById(accountData.getString("depositAccount")), accountData.getString("timestamp"), accountData.getString("id"), accountData.getDouble("amount"), accountData.getString("currency")));
            }
         }
-
         return transactions;
     }
 
@@ -216,7 +151,6 @@ public class Controller {
             Statement stmt = connection.createStatement();
             String sql = "SELECT * FROM transactions";
             ResultSet rs = stmt.executeQuery(sql);
-
             while (rs.next()) {
                 String withdrawAccount = rs.getString("withdrawAccount");
                 String depositAccount = rs.getString("depositAccount");
@@ -224,8 +158,9 @@ public class Controller {
                 String id = rs.getString("id");
                 double amount = rs.getDouble("amount");
                 String currency = rs.getString("currency");
-
-                Transaction bankTransaction = new Transaction(getAccountById(withdrawAccount), getAccountById(depositAccount), timestamp, id, amount, currency);
+                Transaction bankTransaction = new Transaction(getAccountById(withdrawAccount),
+                                                              getAccountById(depositAccount),
+                                                              timestamp, id, amount, currency);
                 transactions.add(bankTransaction);
             }
             rs.close();
@@ -263,11 +198,8 @@ public class Controller {
             totalSuccessful += t.getNumSuccessful();
         }
         mapTest.put("transaction", "transaction");
-
         mapTest.put("user", arrayListTransactionAcc); //users show in hbs file
         mapTest.put("total", Integer.toString(totalSuccessful)); //total successful transactions is passed in
-
-
         return new ModelAndView("transactionDataAcc.hbs", mapTest);
     }
 
@@ -276,7 +208,6 @@ public class Controller {
         ArrayList<Transaction> transactions = retrieveDataTransaction();
         ArrayList<Account> accounts = retrieveData();
         ArrayList<TransactionInfo> transactionInfo = new ArrayList<>();
-
         for (Account account : accounts){
             ArrayList<Transaction> temp = new ArrayList<>();
             for (Transaction transaction : transactions){
@@ -286,28 +217,23 @@ public class Controller {
             }
             transactionInfo.add(new TransactionInfo(account, temp));
         }
-
         return transactionInfo;
     }
 
     public ArrayList<String> fraudData() {
-
         String jsonResult = String.valueOf(Unirest.get("http://api.asep-strath.co.uk/api/Team1/fraud")
                 .header("accept", "application/json")
                 .asJson()
                 .getBody());
-
         return parseJsonId(jsonResult);
     }
 
     public ArrayList<String> parseJsonId(String responseBody) {
         ArrayList<String> fraudId = new ArrayList<>();
         JSONArray jFraudID = new JSONArray(responseBody);
-
         for (int i = 0; i < jFraudID.length(); i++) {
             fraudId.add(jFraudID.getString(i));
         }
-
         return fraudId;
     }
 }
