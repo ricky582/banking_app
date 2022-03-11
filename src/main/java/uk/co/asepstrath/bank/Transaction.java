@@ -50,4 +50,5 @@ public class Transaction implements Comparable<Transaction> {
     public int compareTo(Transaction o) {
         return this.timestamp.compareTo(o.timestamp);
     }
+    
 }

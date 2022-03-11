@@ -1,8 +1,6 @@
 package uk.co.asepstrath.bank;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.jooby.ModelAndView;
 import io.jooby.Jooby;
 import io.jooby.annotations.GET;
@@ -16,12 +14,10 @@ import kong.unirest.json.JSONObject;
 import org.slf4j.Logger;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 //Path = IP/argument, i.e("localhost:8080/accounts)
@@ -48,7 +44,9 @@ public class Controller {
         return new ModelAndView("index.hbs");
     }
 
-
+    /*
+        This request makes a call to the data for each account via Swagger and lists all accounts
+    */
     @GET("/accountsData")
     @ApiResponses({
             @ApiResponse(description = "Success",responseCode = "200"),
@@ -66,6 +64,7 @@ public class Controller {
         return new ModelAndView("accountsData.hbs", mapTest);
     }
 
+    //gets data from Swagger
     public ArrayList<Account> fetchData() {
         String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/Team1/accounts")
                 .asJson()
@@ -73,6 +72,7 @@ public class Controller {
         return parseJson(jsonResult);
     }
 
+    //parses json data for accounts into a list of accounts
     public ArrayList<Account> parseJson(String responseBody) {
         ArrayList<Account> accounts = new ArrayList<>();
         JSONArray accountsData = new JSONArray(responseBody);
@@ -87,6 +87,7 @@ public class Controller {
         return accounts;
     }
 
+    //retrieve accounts from database created in App
     public ArrayList<Account> retrieveData() {
         ArrayList<Account> accounts = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
@@ -107,6 +108,10 @@ public class Controller {
         return accounts;
     }
 
+
+    /*
+        This request makes a call to the transaction data via Swagger and lists all transactions
+    */
     @GET("/transactionData")
     @ApiResponses({
             @ApiResponse(description = "Success",responseCode = "200"),
@@ -124,6 +129,7 @@ public class Controller {
         return new ModelAndView("transactionData.hbs", mapTest);
     }
 
+    //gets transaction data from Swagger
     public ArrayList<Transaction> fetchDataTransaction() {
         String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/team1/transactions?PageSize=10000")
                 .asJson()
@@ -131,6 +137,7 @@ public class Controller {
         return parseJsonTransaction(jsonResult);
     }
 
+    //parses transaction data into transaction objects
     public ArrayList<Transaction> parseJsonTransaction(String responseBody) {
         ArrayList<Transaction> transactions = new ArrayList<>();
         JSONArray transactionsData = new JSONArray(responseBody);
@@ -138,13 +145,14 @@ public class Controller {
         fraud = fraudData();
         for (int i = 0; i < transactionsData.length(); i++) {
             JSONObject accountData = transactionsData.getJSONObject(i);
-           if(!fraud.contains(accountData.getString("id"))) {
+           if(!fraud.contains(accountData.getString("id"))) { //filters out fraudulent transactions
                transactions.add(new Transaction(getAccountById(accountData.getString("withdrawAccount")), getAccountById(accountData.getString("depositAccount")), accountData.getString("timestamp"), accountData.getString("id"), accountData.getDouble("amount"), accountData.getString("currency")));
            }
         }
         return transactions;
     }
 
+    //retrieve transactions from database created in App
     public ArrayList<Transaction> retrieveDataTransaction() {
         ArrayList<Transaction> transactions = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
@@ -168,6 +176,7 @@ public class Controller {
         return transactions;
     }
 
+    //finds account by id or creates a new account if it is a non-local account
     public Account getAccountById(String id){
         ArrayList<Account> accounts = retrieveData();
         for (Account a : accounts){
@@ -179,7 +188,9 @@ public class Controller {
     }
 
 
-    //transaction data by account giving information required in user story
+    /*
+        This request makes a call to the data for each account and transactions via Swagger to list transaction data for each account
+    */
     @GET("/transactionData/byAccount")
     @ApiResponses({
             @ApiResponse(description = "Success",responseCode = "200"),
@@ -203,7 +214,7 @@ public class Controller {
         return new ModelAndView("transactionDataAcc.hbs", mapTest);
     }
 
-
+    //grabs data for transaction and accounts and creates transactionInfo objects out of them
     public ArrayList<TransactionInfo> retrieveDataTransactionAcc() {
         ArrayList<Transaction> transactions = retrieveDataTransaction();
         ArrayList<Account> accounts = retrieveData();
@@ -220,6 +231,7 @@ public class Controller {
         return transactionInfo;
     }
 
+    //gets fraud data from Swagger
     public ArrayList<String> fraudData() {
         String jsonResult = String.valueOf(Unirest.get("http://api.asep-strath.co.uk/api/Team1/fraud")
                 .header("accept", "application/json")
@@ -228,6 +240,7 @@ public class Controller {
         return parseJsonId(jsonResult);
     }
 
+    //parses fraud data to string
     public ArrayList<String> parseJsonId(String responseBody) {
         ArrayList<String> fraudId = new ArrayList<>();
         JSONArray jFraudID = new JSONArray(responseBody);

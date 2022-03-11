@@ -29,8 +29,8 @@ public class TransactionInfo {
 
     //returns current balance - note that for now the actual balance of account does not change - it is all done artificially
     public double getCurrentBal() {
-        double currentBal = initialBal;
-        for(Transaction trns : transactions) {
+        double currentBal = initialBal; //start at initial balance of account
+        for(Transaction trns : transactions) { //attempts to do all transactions in list with the appropriate checks
             if (account.getID().equals(trns.getWidAcc().getID()) && currentBal - trns.getAmount() >= 0) {
                 currentBal -= trns.getAmount();
                 if (!trns.getDone()) {
@@ -46,11 +46,7 @@ public class TransactionInfo {
             }
             else numFailed++;
         }
-        //to avoid same error from accounts
-        currentBal = currentBal * 100;
-        currentBal = Math.round(currentBal);
-        currentBal = currentBal / 100;
-        return currentBal;
+        return Math.round(currentBal*100.00)/100.00;
     }
 
     //getter for numFailed
