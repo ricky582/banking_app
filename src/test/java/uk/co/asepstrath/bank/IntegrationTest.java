@@ -26,18 +26,6 @@ class IntegrationTest {
         Response rsp = client.newCall(req).execute();
         assertEquals(StatusCode.OK.value(), rsp.code());
 
-        req = new Request.Builder().url("http://localhost:" + serverPort + "/api").build();
-        rsp = client.newCall(req).execute();
-        assertEquals(StatusCode.OK.value(), rsp.code());
-
-        req = new Request.Builder().url("http://localhost:" + serverPort + "/api").build();
-        rsp = client.newCall(req).execute();
-        assertEquals(StatusCode.OK.value(), rsp.code());
-
-        req = new Request.Builder().url("http://localhost:" + serverPort + "/accounts").build();
-        rsp = client.newCall(req).execute();
-        assertEquals(StatusCode.OK.value(), rsp.code());
-
         req = new Request.Builder().url("http://localhost:" + serverPort + "/accountsData").build();
         rsp = client.newCall(req).execute();
         assertEquals(StatusCode.OK.value(), rsp.code());
