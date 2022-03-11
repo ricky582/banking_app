@@ -52,58 +52,6 @@ public class Controller {
     }
 
 
-    @GET("/api")
-    @ApiResponses({
-            @ApiResponse(description = "Success",responseCode = "200"),
-            @ApiResponse(description = "Not Found",responseCode = "404")
-    })
-    @Operation(
-            summary = "Display Accounts",
-            description = "Display raw array data from the hardcoded values created by this method"
-    )
-    public String displayAccounts() throws JsonProcessingException {
-        ArrayList<Account> accounts = gatherAccounts();
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        return objectMapper.writeValueAsString(accounts);
-    }
-
-
-    public ArrayList<Account> gatherAccounts() {
-        ArrayList<Account> accounts = new ArrayList<>();
-        accounts.add(new Account("Rachel", 50));
-        accounts.add(new Account("Monica", 100.00));
-        accounts.add(new Account("Phoebe", 76));
-        accounts.add(new Account("Joey", 23.90));
-        accounts.add(new Account("Chandler", 3.00));
-        accounts.add(new Account("Ross", 54.32));
-
-        return accounts;
-    }
-
-    @GET({"/get", "/accounts"})
-    @ApiResponses({
-            @ApiResponse(description = "Success",responseCode = "200"),
-            @ApiResponse(description = "Not Found",responseCode = "404")
-    })
-    @Operation(
-            summary = "Display Hard Coded",
-            description = "Display hard coded accounts on a table or throws a 404"
-    )
-    
-    public ModelAndView accounts() throws IOException {
-        String objectOutput = displayAccounts();
-
-        ObjectMapper mapper = new ObjectMapper();
-        List<Map<String, Object>> listData = mapper.readValue(objectOutput, new TypeReference<List<Map<String, Object>>>(){});
-
-        Map<String, Object> mapTest = new HashMap<>();
-        mapTest.put("accounts", "accounts");
-        mapTest.put("user", listData);
-
-        return new ModelAndView("accounts.hbs", mapTest);
-    }
-
     @GET("/accountsData")
     @ApiResponses({
             @ApiResponse(description = "Success",responseCode = "200"),
