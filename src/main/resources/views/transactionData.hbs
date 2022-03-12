@@ -50,9 +50,20 @@
            </tfoot>
        </table>
 <form name = "Repeat">
-    <input type = "text" name = "id" placeholder = "transaction id" value = "" >
-    <input type = "submit" value = "RepeatTransaction" onclick="window.open('http://localhost:8080/transactionData/');" >
+    <input type = "text" name = "id" id="inputBox" placeholder = "transaction id" value = "" >
+    <input type = "submit" value = "RepeatTransaction" onclick="redirect()" >
 </form>
+<script type = "text/javascript">
+function redirect(){
+var windowsObjectReference = null;
+if(windowsObjectReference == null || windowsObjectReference.closed) {
+    var Val = document.getElementById("inputBox").value;
+    windowsObjectReference = window.open("http://localhost:8080/transactionData/?id=" + Val);
+} else {
+    windowsObjectReference.focus();
+};
 
+}
+</script>
 </body>
 </html>

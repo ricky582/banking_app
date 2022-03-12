@@ -151,7 +151,7 @@ public class Controller {
     }
 
     public ArrayList<Transaction> fetchDataTransaction() {
-        String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/team1/transactions?PageSize=10000")
+        String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/team1/transactions?PageSize=1000000")
                 .asJson()
                 .getBody());
 
@@ -276,7 +276,7 @@ public class Controller {
 
     public ArrayList<Transaction> repeatTransaction(String transactionid) {
 
-        SimpleDateFormat newDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat newDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSS");
         Date newDate = new Date();
         ArrayList<Transaction> tranList = retrieveDataTransaction();
         for (int i = 0; i < tranList.size(); i++) {
