@@ -5,9 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jooby.MediaType;
 import io.jooby.ModelAndView;
-import io.jooby.Jooby;
 import io.jooby.annotations.*;
-import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
@@ -267,11 +265,10 @@ public class Controller {
         return fraudId;
     }
 
-    @Path("/transactionData/")
-    @GET
-    @Produces(MediaType.TEXT)
-    public void getTransId(@QueryParam("id") String transactionid) {
-       repeatTransaction(transactionid);
+    @GET("/transactionData/")
+    public ModelAndView Repeat(@QueryParam("id") String transactionid) {
+        repeatTransaction(transactionid);
+        return new ModelAndView("RepeatTransactionSuccess.hbs");
     }
 
     public ArrayList<Transaction> repeatTransaction(String transactionid) {
