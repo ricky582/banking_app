@@ -290,7 +290,7 @@ public class Controller {
                     prep.setString(1, tranList.get(i).getWidAcc().getID());
                     prep.setString(2, tranList.get(i).getDepAcc().getID());
                     prep.setString(3, newDateFormat.format(newDate));
-                    prep.setString(4,tranList.get(i).getId()+1);
+                    prep.setString(4, tranList.get(i).generateId());
                     prep.setDouble(5, tranList.get(i).getAmount());
                     prep.setString(6, tranList.get(i).getCurrency());
 

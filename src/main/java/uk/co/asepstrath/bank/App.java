@@ -123,7 +123,6 @@ public class App extends Jooby {
             log.error("Database Creation Error", e);
         }
 
-
     }
     public void onStop() {
         System.out.println("Shutting Down...");
