@@ -33,15 +33,15 @@ public class TransactionInfo {
         for(Transaction trns : transactions) { //attempts to do all transactions in list with the appropriate checks
             if (account.getID().equals(trns.getWidAcc().getID()) && currentBal - trns.getAmount() >= 0) {
                 currentBal -= trns.getAmount();
-                if (!trns.getDone()) {
+                if (trns.getStatus() == 0) {
                     numSuccessful++;
-                    trns.finished();
+                    trns.setStatus(1);
                 }
             } else if (trns.getWidAcc().getBalance() - trns.getAmount() >= 0 || !trns.getWidAcc().getLocal()) {
                 currentBal += trns.getAmount();
-                if (!trns.getDone()) {
+                if (trns.getStatus() == 0) {
                     numSuccessful++;
-                    trns.finished();
+                    trns.setStatus(1);
                 }
             }
             else numFailed++;

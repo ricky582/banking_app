@@ -122,7 +122,9 @@ public class Controller {
             description = "Display all transactions in the bank collection, kept on a table of ten which is scrollable/searchable"
     )
     public ModelAndView transactionData() {
+        applyTransactions(retrieveDataTransaction());
         ArrayList<Transaction> arrayListTransaction = retrieveDataTransaction();
+        applyTransactions(retrieveDataTransaction());
         Map<String, Object> mapTest = new HashMap<>();
         mapTest.put("transaction", "transaction");
         mapTest.put("transac", arrayListTransaction);
@@ -169,11 +171,30 @@ public class Controller {
                 Transaction bankTransaction = new Transaction(getAccountById(withdrawAccount),
                                                               getAccountById(depositAccount),
                                                               timestamp, id, amount, currency);
+                bankTransaction.setStatus(rs.getInt("status"));
                 transactions.add(bankTransaction);
             }
             rs.close();
         } catch (SQLException e) {}
+
         return transactions;
+    }
+
+    public void applyTransactions(ArrayList<Transaction> arr) {
+        try {
+            Connection connection = dataSource.getConnection();
+            //Statement stmt = connection.createStatement();
+            for (Transaction t : arr) {
+                String sql = "UPDATE transactions SET status = ? WHERE id = ?;";
+                PreparedStatement prep = connection.prepareStatement(sql);
+                prep.setInt(1, 1);
+                prep.setString(2, "12ac7766-c511-400d-9651-d85166e3eab2");
+                prep.executeUpdate();
+                prep.close();
+                connection.close();
+            }
+        }
+        catch (SQLException e){}
     }
 
     //finds account by id or creates a new account if it is a non-local account

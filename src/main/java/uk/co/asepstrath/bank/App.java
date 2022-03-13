@@ -114,10 +114,11 @@ public class App extends Jooby {
                     + " timestamp text NOT NULL, \n"
                     + " id varchar(50) PRIMARY KEY,\n"
                     + " amount decimal NOT NULL,\n"
-                    + " currency text NOT NULL);";
+                    + " currency text NOT NULL,\n"
+                    + " status integer NOT NULL);";
             stmt.execute(sql);
-            sql = "INSERT INTO transactions (withdrawAccount, depositAccount, timestamp, id, amount, currency) "
-                    + "VALUES (?,?,?,?,?,?)";
+            sql = "INSERT INTO transactions (withdrawAccount, depositAccount, timestamp, id, amount, currency, status) "
+                    + "VALUES (?,?,?,?,?,?,?)";
             PreparedStatement prep = connection.prepareStatement(sql);
             for(int x = 0; x < transac.size() ;x++) {
                 prep.setString(1, transac.get(x).getWidAcc().getID());
@@ -126,6 +127,7 @@ public class App extends Jooby {
                 prep.setString(4, transac.get(x).getId());
                 prep.setDouble(5, transac.get(x).getAmount());
                 prep.setString(6, transac.get(x).getCurrency());
+                prep.setInt(7, transac.get(x).getStatus());
                 prep.executeUpdate();
             }
             prep.close();

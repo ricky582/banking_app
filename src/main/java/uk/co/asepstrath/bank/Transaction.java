@@ -8,7 +8,7 @@ public class Transaction implements Comparable<Transaction> {
     private final String id;                //unique identifier for transaction
     private final double amount;            //amount of money to be moved
     private final String currency;          //string to represent currency (e.g "GBP")
-    private boolean done;                   //starts at false, switches to true once funds have been updated in BOTH accounts
+    private int status;                   //starts at 0, will switch to 1 if transactions is successful or -1 if it fails
 
     //constructor for transactions
     public Transaction(Account withdrawAccount, Account depositAccount, String timestamp, String id, double amount, String currency){
@@ -18,7 +18,7 @@ public class Transaction implements Comparable<Transaction> {
         this.id = id;
         this.amount = amount;
         this.currency = currency;
-        this.done = false;
+        this.status = 0;
     }
 
     //getter for withdrawAccount
@@ -39,16 +39,32 @@ public class Transaction implements Comparable<Transaction> {
     //getter for currency
     public String getCurrency(){return currency;}
 
-    //getter for done
-    public boolean getDone(){return done;}
+    //getter for status
+    public int getStatus(){return status;}
+
+    public String getDone(){
+        if (this.status == 0){
+            return "Incomplete";
+        }
+        else if (this.status == 1){
+            return "Done";
+        }
+        else {
+            return "Failed";
+        }
+    }
 
     //marks transaction as complete
-    public void finished(){done = true;}
+    public void setStatus(int s){
+        if(s <= 1 && s >=-1) {
+            status = s;
+        }
+    }
 
     //compareTo() now orders by timestamp so transactions can be applied in order of which they occured
     @Override
     public int compareTo(Transaction o) {
         return this.timestamp.compareTo(o.timestamp);
     }
-    
+
 }
