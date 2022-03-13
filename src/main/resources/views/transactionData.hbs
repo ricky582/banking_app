@@ -19,13 +19,11 @@
         var windowsObjectReference = null;
         var thisWindow = "http://localhost:8080/transactionData"
         if(windowsObjectReference == null || windowsObjectReference.closed) {
-        var Val = document.getElementById("inputBox").value;
-
-        windowsObjectReference = window.open("http://localhost:8080/transactionData/?id=" + Val);
-
-    } else {
-        windowsObjectReference.focus();
-      };
+            var Val = document.getElementById("inputBox").value;
+            windowsObjectReference = window.open("http://localhost:8080/transactionData/?id=" + Val);
+        } else {
+            windowsObjectReference.focus();
+        };
     }
     </script>
 </head>
@@ -68,6 +66,5 @@
     <input type = "text" name = "id" id="inputBox" placeholder = "transaction id" value = "" >
     <input type = "submit" value = "RepeatTransaction" onclick="redirect()" >
 </form>
-
 </body>
 </html>

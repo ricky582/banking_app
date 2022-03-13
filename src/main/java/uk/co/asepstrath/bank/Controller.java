@@ -266,13 +266,14 @@ public class Controller {
     }
 
     @GET("/transactionData/")
-    public ModelAndView Repeat(@QueryParam("id") String transactionid) {
-        repeatTransaction(transactionid);
-        return new ModelAndView("RepeatTransactionSuccess.hbs");
+    public ModelAndView repeatSuccess(@QueryParam("id") String transactionid) {
+        if (repeatTransaction(transactionid) == true) {
+            return new ModelAndView("RepeatTransactionSuccess.hbs");
+        }
+        return new ModelAndView("RepeatTransactionError.hbs");
     }
 
-    public ArrayList<Transaction> repeatTransaction(String transactionid) {
-
+    public boolean repeatTransaction(String transactionid) {
         SimpleDateFormat newDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSS");
         Date newDate = new Date();
         ArrayList<Transaction> tranList = retrieveDataTransaction();
@@ -296,15 +297,15 @@ public class Controller {
 
                     prep.executeUpdate();
 
-
                     prep.close();
                     stmt.close();
+                    return true;
                 } catch (SQLException e) {
+                    logger.error("Database insertion error", e);
+                    return false;
                 }
             }
         }
-
-        return tranList;
+        return false;
     }
-
 }
