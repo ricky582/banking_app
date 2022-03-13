@@ -1,17 +1,13 @@
 package uk.co.asepstrath.bank;
 
-import io.jooby.exception.StartupException;
-import org.junit.jupiter.api.Assertions;
-import uk.co.asepstrath.bank.App;
-import io.jooby.JoobyTest;
-import io.jooby.StatusCode;
+import io.jooby.*;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
-import java.net.BindException;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -37,5 +33,57 @@ class IntegrationTest {
         req = new Request.Builder().url("http://localhost:" + serverPort + "/transactionData/byAccount").build();
         rsp = client.newCall(req).execute();
         assertEquals(StatusCode.OK.value(), rsp.code());
+    }
+
+    @Test
+    void index() {
+        MockRouter router = new MockRouter(new App());
+        MockContext context = new MockContext();
+
+        router.get("/", context, rsp -> {
+            ModelAndView modelAndView = (ModelAndView) rsp.value();
+            Assertions.assertThat(modelAndView).isNotNull();
+            String view = modelAndView.getView();
+            Assertions.assertThat(view).isEqualTo("index.hbs");
+        });
+    }
+
+    @Test
+    void accountsData() {
+        MockRouter router = new MockRouter(new App());
+        MockContext context = new MockContext();
+
+        router.get("/accountsData", context, rsp -> {
+            ModelAndView modelAndView = (ModelAndView) rsp.value();
+            Assertions.assertThat(modelAndView).isNotNull();
+            String view = modelAndView.getView();
+            Assertions.assertThat(view).isEqualTo("accountsData.hbs");
+        });
+    }
+
+    @Test
+    void transactionData() {
+        MockRouter router = new MockRouter(new App());
+        MockContext context = new MockContext();
+
+        router.get("/transactionData", context, rsp -> {
+            ModelAndView modelAndView = (ModelAndView) rsp.value();
+            Assertions.assertThat(modelAndView).isNotNull();
+            String view = modelAndView.getView();
+            Assertions.assertThat(view).isEqualTo("transactionData.hbs");
+        });
+    }
+
+    @Test
+    void transactionDataAcc() {
+        MockRouter router = new MockRouter(new App());
+        MockContext context = new MockContext();
+
+        router.get("/transactionData/byAccount", context, rsp -> {
+            ModelAndView modelAndView = (ModelAndView) rsp.value();
+            Assertions.assertThat(modelAndView).isNotNull();
+            String view = modelAndView.getView();
+            Assertions.assertThat(view).isEqualTo("transactionDataAcc.hbs");
+        });
     }
 }
