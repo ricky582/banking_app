@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class TransactionInfo {
-    private final double initialBal;                  //initial balance before any transactions are done
     private final Account account;                    //account we want the transaction info for (note that only local accounts can have transactionInfo objects
     private ArrayList<Transaction> transactions;      //list of all transactions associated with account
     private int numSuccessful;                        //number of successful transactions
@@ -15,7 +14,6 @@ public class TransactionInfo {
         this.account = account;
         this.transactions = transactions;
         Collections.sort(this.transactions);
-        this.initialBal = account.getBalance();
     }
 
     //getter for account
@@ -29,6 +27,7 @@ public class TransactionInfo {
 
     //returns current balance
     public double getCurrentBal() {
+        //left in to make sure that tests still pass - this functionality is now carried out in Controller
         for (Transaction t : transactions){
             t.doTransaction();
         }

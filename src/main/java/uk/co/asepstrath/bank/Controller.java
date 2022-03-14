@@ -194,29 +194,23 @@ public class Controller {
             Collections.sort(arr);
             for (Transaction t : arr) {
                 if (t.getStatus() == 0) {
-                    PreparedStatement prep1 = connection.prepareStatement("SELECT * FROM accounts WHERE id = ? OR id = ?;");
-                    prep1.setString(1, t.getWidAcc().getID());
-                    prep1.setString(2, t.getDepAcc().getID());
-                    ResultSet rs = prep1.executeQuery();
-                    while (rs.next()) {
-                        if (rs.getString("id").equals(t.getWidAcc().getID())) {
-                            t.getWidAcc().setBalance(rs.getDouble("balance"));
-                        } else t.getDepAcc().setBalance(rs.getDouble("balance"));
-                    }
+                    Account dep = getAccountById(t.getDepAcc().getID());
+                    Account wid = getAccountById(t.getWidAcc().getID());
+                    t.getDepAcc().setBalance(dep.getBalance());
+                    t.getWidAcc().setBalance(wid.getBalance());
                     PreparedStatement prep = connection.prepareStatement("UPDATE transactions SET status = ? WHERE id = ?;");
                     t.doTransaction();
                     prep.setInt(1, t.getStatus());
                     prep.setString(2, t.getId());
                     prep.executeUpdate();
-                    PreparedStatement prep2 = connection.prepareStatement("UPDATE accounts SET balance = ? WHERE id = ?;");
-                    prep2.setDouble(1, t.getDepAcc().getBalance());
-                    prep2.setString(2, t.getDepAcc().getID());
-                    prep2.executeUpdate();
-                    PreparedStatement prep3 = connection.prepareStatement("UPDATE accounts SET balance = ? WHERE id = ?;");
-                    prep3.setDouble(1, t.getWidAcc().getBalance());
-                    prep3.setString(2, t.getWidAcc().getID());
-                    prep3.executeUpdate();
-                    prep3.close();
+                    prep = connection.prepareStatement("UPDATE accounts SET balance = ? WHERE id = ?;");
+                    prep.setDouble(1, t.getDepAcc().getBalance());
+                    prep.setString(2, t.getDepAcc().getID());
+                    prep.executeUpdate();
+                    prep.setDouble(1, t.getWidAcc().getBalance());
+                    prep.setString(2, t.getWidAcc().getID());
+                    prep.executeUpdate();
+                    prep.close();
                 }
             }
         }
@@ -266,7 +260,6 @@ public class Controller {
         Map<String, Object> mapTest = new HashMap<>();
         int totalSuccessful = 0;
         for (TransactionInfo t : arrayListTransactionAcc){
-            t.getCurrentBal();
             totalSuccessful += t.getNumSuccessful();
         }
         mapTest.put("transaction", "transaction");
