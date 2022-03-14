@@ -17,6 +17,7 @@ import javax.sql.DataSource;
 import java.net.HttpURLConnection;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,6 +58,7 @@ public class Controller {
             description = "Display all accounts in the bank collection, kept on a table of ten which is scrollable/searchable"
     )
     public ModelAndView accountsData() {
+        applyTransactions(retrieveDataTransaction());
         ArrayList<Account> arrayListAccount = retrieveData();
         Map<String, Object> mapTest = new HashMap<>();
         mapTest.put("accounts", "accounts");
@@ -100,7 +102,9 @@ public class Controller {
                 double balance = rs.getDouble("balance");
                 String accountType = rs.getString("accountType");
                 String currency = rs.getString("currency");
-                Account bankUser = new Account(id, name, balance, accountType, currency);
+                double initialBal = rs.getDouble("initialBal");
+                Account bankUser = new Account(id, name, initialBal, accountType, currency);
+                bankUser.setBalance(balance);
                 accounts.add(bankUser);
             }
             rs.close();
@@ -124,7 +128,6 @@ public class Controller {
     public ModelAndView transactionData() {
         applyTransactions(retrieveDataTransaction());
         ArrayList<Transaction> arrayListTransaction = retrieveDataTransaction();
-        applyTransactions(retrieveDataTransaction());
         Map<String, Object> mapTest = new HashMap<>();
         mapTest.put("transaction", "transaction");
         mapTest.put("transac", arrayListTransaction);
@@ -148,7 +151,12 @@ public class Controller {
         for (int i = 0; i < transactionsData.length(); i++) {
             JSONObject accountData = transactionsData.getJSONObject(i);
            if(!fraud.contains(accountData.getString("id"))) { //filters out fraudulent transactions
-               transactions.add(new Transaction(getAccountById(accountData.getString("withdrawAccount")), getAccountById(accountData.getString("depositAccount")), accountData.getString("timestamp"), accountData.getString("id"), accountData.getDouble("amount"), accountData.getString("currency")));
+               transactions.add(new Transaction(getAccountById(accountData.getString("withdrawAccount")),
+                       getAccountById(accountData.getString("depositAccount")),
+                       accountData.getString("timestamp"),
+                       accountData.getString("id"),
+                       accountData.getDouble("amount"),
+                       accountData.getString("currency")));
            }
         }
         return transactions;
@@ -183,15 +191,33 @@ public class Controller {
     public void applyTransactions(ArrayList<Transaction> arr) {
         try {
             Connection connection = dataSource.getConnection();
-            //Statement stmt = connection.createStatement();
+            Collections.sort(arr);
             for (Transaction t : arr) {
-                String sql = "UPDATE transactions SET status = ? WHERE id = ?;";
-                PreparedStatement prep = connection.prepareStatement(sql);
-                prep.setInt(1, 1);
-                prep.setString(2, "12ac7766-c511-400d-9651-d85166e3eab2");
-                prep.executeUpdate();
-                prep.close();
-                connection.close();
+                if (t.getStatus() == 0) {
+                    PreparedStatement prep1 = connection.prepareStatement("SELECT * FROM accounts WHERE id = ? OR id = ?;");
+                    prep1.setString(1, t.getWidAcc().getID());
+                    prep1.setString(2, t.getDepAcc().getID());
+                    ResultSet rs = prep1.executeQuery();
+                    while (rs.next()) {
+                        if (rs.getString("id").equals(t.getWidAcc().getID())) {
+                            t.getWidAcc().setBalance(rs.getDouble("balance"));
+                        } else t.getDepAcc().setBalance(rs.getDouble("balance"));
+                    }
+                    PreparedStatement prep = connection.prepareStatement("UPDATE transactions SET status = ? WHERE id = ?;");
+                    t.doTransaction();
+                    prep.setInt(1, t.getStatus());
+                    prep.setString(2, t.getId());
+                    prep.executeUpdate();
+                    PreparedStatement prep2 = connection.prepareStatement("UPDATE accounts SET balance = ? WHERE id = ?;");
+                    prep2.setDouble(1, t.getDepAcc().getBalance());
+                    prep2.setString(2, t.getDepAcc().getID());
+                    prep2.executeUpdate();
+                    PreparedStatement prep3 = connection.prepareStatement("UPDATE accounts SET balance = ? WHERE id = ?;");
+                    prep3.setDouble(1, t.getWidAcc().getBalance());
+                    prep3.setString(2, t.getWidAcc().getID());
+                    prep3.executeUpdate();
+                    prep3.close();
+                }
             }
         }
         catch (SQLException e){}
@@ -199,13 +225,27 @@ public class Controller {
 
     //finds account by id or creates a new account if it is a non-local account
     public Account getAccountById(String id){
-        ArrayList<Account> accounts = retrieveData();
-        for (Account a : accounts){
-            if (id.equals(a.getID())){
-                return a;
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement prep = connection.prepareStatement("SELECT * FROM accounts WHERE id = ?;");
+            prep.setString(1, id);
+            ResultSet rs = prep.executeQuery();
+            if (!rs.next()){
+                return new Account(id);
             }
+            id = rs.getString("id");
+            String name = rs.getString("name");
+            double balance = rs.getDouble("balance");
+            String accountType = rs.getString("accountType");
+            String currency = rs.getString("currency");
+            double initialBal = rs.getDouble("initialBal");
+            Account bankUser = new Account(id, name, initialBal, accountType, currency);
+            bankUser.setBalance(balance);
+            rs.close();
+            return bankUser;
         }
-        return new Account(id);
+        catch (SQLException e){
+            return null;
+        }
     }
 
 

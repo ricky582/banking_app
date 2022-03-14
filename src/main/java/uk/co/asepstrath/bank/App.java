@@ -83,10 +83,11 @@ public class App extends Jooby {
                     + " name text NOT NULL,\n"
                     + " balance decimal NOT NULL,\n"
                     + " accountType text NOT NULL,\n"
-                    + " currency text NOT NULL);";
+                    + " currency text NOT NULL,\n"
+                    + " initialBal decimal NOT NULL);";
             stmt.execute(sql);
-            sql = "INSERT INTO accounts (id, name, balance, accountType, currency) "
-                    + "VALUES (?,?,?,?,?)";
+            sql = "INSERT INTO accounts (id, name, balance, accountType, currency, initialBal) "
+                    + "VALUES (?,?,?,?,?,?)";
             PreparedStatement prep = connection.prepareStatement(sql);
             for(int x = 0; x < acc.size() ;x++) {
                 prep.setString(1, acc.get(x).getID());
@@ -94,6 +95,7 @@ public class App extends Jooby {
                 prep.setDouble(3, acc.get(x).getBalance());
                 prep.setString(4, acc.get(x).getAccountType());
                 prep.setString(5, acc.get(x).getCurrency());
+                prep.setDouble(6, acc.get(x).getBalance());
                 prep.executeUpdate();
             }
             prep.close();

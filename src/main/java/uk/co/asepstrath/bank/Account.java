@@ -8,11 +8,13 @@ public class Account {
     private String accountType;     //string to represent account type (e.g "Investment Account")
     private String currency;        //string to represent currency (e.g "GBP")
     private final boolean localAcc; //represents whether account is in bank or not
+    private final double initialBal;
 
     //simple account constructor mainly used for testing
     public Account(String n, double amount) {
         this.name = n;
         this.balance = amount;
+        this.initialBal = amount;
         this.localAcc = true;
     }
 
@@ -21,6 +23,7 @@ public class Account {
         this.id = id;
         this.name = name;
         this.balance = balance;
+        this.initialBal = balance;
         this.accountType = accountType;
         this.currency = currency;
         this.localAcc = true;
@@ -30,6 +33,7 @@ public class Account {
     public Account(String id){
         this.id = id;
         this.localAcc = false;
+        this.initialBal = -1;
     }
 
     //better formatted toString function
@@ -51,10 +55,19 @@ public class Account {
         balance -= amount;
     }
 
+    public double getInitialBal() {
+        return initialBal;
+    }
+
     //balance getter
     public double getBalance() {
         if(localAcc) return Math.round(balance*100.00)/100.00;
         else return -1;
+    }
+
+    //balance setter
+    public void setBalance(double bal){
+        balance = bal;
     }
 
     //name getter

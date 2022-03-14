@@ -1,5 +1,7 @@
 package uk.co.asepstrath.bank;
 
+import java.util.Objects;
+
 public class Transaction implements Comparable<Transaction> {
 
     private final Account withdrawAccount;  //Account to take funds from
@@ -58,6 +60,21 @@ public class Transaction implements Comparable<Transaction> {
     public void setStatus(int s){
         if(s <= 1 && s >=-1) {
             status = s;
+        }
+    }
+
+    public void doTransaction(){
+        if (this.withdrawAccount.getLocal() && this.status == 0) {
+            if (withdrawAccount.getBalance() - amount >= 0) {
+                withdrawAccount.withdraw(amount);
+                depositAccount.deposit(amount);
+                status = 1;
+            }
+            else this.status = -1;
+        }
+        else if (status == 0){
+            depositAccount.deposit(amount);
+            this.status = 1;
         }
     }
 

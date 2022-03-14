@@ -25,37 +25,35 @@ public class TransactionInfo {
     public ArrayList<Transaction> getTransactions() {return transactions;}
 
     //returns the initial balance
-    public double getInitialBal() {return initialBal;}
+    public double getInitialBal() {return account.getInitialBal();}
 
-    //returns current balance - note that for now the actual balance of account does not change - it is all done artificially
+    //returns current balance
     public double getCurrentBal() {
-        double currentBal = initialBal; //start at initial balance of account
-        for(Transaction trns : transactions) { //attempts to do all transactions in list with the appropriate checks
-            if (account.getID().equals(trns.getWidAcc().getID()) && currentBal - trns.getAmount() >= 0) {
-                currentBal -= trns.getAmount();
-                if (trns.getStatus() == 0) {
-                    numSuccessful++;
-                    trns.setStatus(1);
-                }
-            } else if (trns.getWidAcc().getBalance() - trns.getAmount() >= 0 || !trns.getWidAcc().getLocal()) {
-                currentBal += trns.getAmount();
-                if (trns.getStatus() == 0) {
-                    numSuccessful++;
-                    trns.setStatus(1);
-                }
-            }
-            else numFailed++;
+        for (Transaction t : transactions){
+            t.doTransaction();
         }
-        return Math.round(currentBal*100.00)/100.00;
+        return account.getBalance();
     }
 
     //getter for numFailed
     public int getNumFailed() {
+        numFailed = 0;
+        for (Transaction t : transactions){
+            if (t.getStatus() == -1){
+                numFailed++;
+            }
+        }
         return numFailed;
     }
 
     //getter for numSuccessful
     public int getNumSuccessful() {
+        numSuccessful = 0;
+        for (Transaction t : transactions) {
+            if (t.getStatus() == 1) {
+                numSuccessful++;
+            }
+        }
         return numSuccessful;
     }
 }
