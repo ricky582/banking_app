@@ -88,7 +88,7 @@ public class Transaction implements Comparable<Transaction> {
         int n4 = 4;
         int n5 = 12;
         String result = "";
-        String AlphaNumericString = "abcdefghijklmnopqrstuvwxyz"
+        String AlphaNumericString = "abcdefg"
                 + "0123456789";
         StringBuilder sb1 = new StringBuilder(n1);
         StringBuilder sb2 = new StringBuilder(n2);
@@ -101,23 +101,23 @@ public class Transaction implements Comparable<Transaction> {
         int randInt = rand.nextInt(upperBound);
 
         for (int i = 0; i < n1; i++) {
-            int index = (int)(AlphaNumericString.length() * Math.random());
+            int index = (int)(AlphaNumericString.length() * rand.nextDouble());
             sb1.append(AlphaNumericString.charAt(index));
         }
         for (int i = 0; i < n2; i++) {
-            int index = (int)(AlphaNumericString.length() * Math.random());
+            int index = (int)(AlphaNumericString.length() * rand.nextDouble());
             sb2.append(AlphaNumericString.charAt(index));
         }
         for (int i = 0; i < n3; i++) {
-            int index = (int)(AlphaNumericString.length() * Math.random());
+            int index = (int)(AlphaNumericString.length() * rand.nextDouble());
             sb3.append(AlphaNumericString.charAt(index));
         }
         for (int i = 0; i < n4; i++) {
-            int index = (int)(AlphaNumericString.length() * Math.random());
+            int index = (int)(AlphaNumericString.length() * rand.nextDouble());
             sb4.append(AlphaNumericString.charAt(index));
         }
         for (int i = 0; i < n5; i++) {
-            int index = (int)(AlphaNumericString.length() * Math.random());
+            int index = (int)(AlphaNumericString.length() * rand.nextDouble());
             sb5.append(AlphaNumericString.charAt(index));
         }
 
