@@ -1,12 +1,16 @@
 package uk.co.asepstrath.bank;
 
 
-import io.jooby.ModelAndView;
-import io.jooby.annotations.GET;
-import io.jooby.annotations.Path;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jooby.Jooby;
+import io.jooby.MediaType;
+import io.jooby.ModelAndView;
+import io.jooby.annotations.*;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
@@ -15,10 +19,12 @@ import org.slf4j.Logger;
 import javax.sql.DataSource;
 import java.net.HttpURLConnection;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Date;
 
 //Path = IP/argument, i.e("localhost:8080/accounts)
 @Path("/")
@@ -298,5 +304,50 @@ public class Controller {
             }
         }
         catch (SQLException e) {}
+    }
+
+    @GET("/transactionData/")
+    public ModelAndView repeatSuccess(@QueryParam("id") String transactionid) {
+        if (repeatTransaction(transactionid) == true) {
+            return new ModelAndView("RepeatTransactionSuccess.hbs");
+        }
+        return new ModelAndView("RepeatTransactionError.hbs");
+    }
+
+    public boolean repeatTransaction(String transactionid) {
+        SimpleDateFormat newDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSS");
+        Date newDate = new Date();
+        ArrayList<Transaction> tranList = retrieveDataTransaction();
+        for (int i = 0; i < tranList.size(); i++) {
+            if (tranList.get(i).getId().equals(transactionid)) {
+                try (Connection connection = dataSource.getConnection()) {
+
+                    Statement stmt = connection.createStatement();
+
+                    String sql = "INSERT INTO transactions (withdrawAccount, depositAccount, timestamp, id, amount, currency, status) "
+                                 + "VALUES (?,?,?,?,?,?,?)";
+
+                    PreparedStatement prep = connection.prepareStatement(sql);
+
+                    prep.setString(1, tranList.get(i).getWidAcc().getID());
+                    prep.setString(2, tranList.get(i).getDepAcc().getID());
+                    prep.setString(3, newDateFormat.format(newDate));
+                    prep.setString(4, tranList.get(i).generateId());
+                    prep.setDouble(5, tranList.get(i).getAmount());
+                    prep.setString(6, tranList.get(i).getCurrency());
+                    prep.setInt(7, tranList.get(i).getStatus());
+
+                    prep.executeUpdate();
+
+                    prep.close();
+                    stmt.close();
+                    return true;
+                } catch (SQLException e) {
+                    logger.error("Database insertion error", e);
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 }

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Repeat </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;500;700&display=swap" as="style" onload="this.onload=null; this.rel='stylesheet'" />
+    <noscript>
+        <link
+                href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;500;700&display=swap"
+                rel="stylesheet"
+                type="text/css"
+        />
+    </noscript>
+    <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+         fontFamily: {
+            'sans': ['Inter'],
+         },
+        }
+      }
+    }
+    function closeWindow() {
+        window.opener.location.reload();
+        window.close();
+    }
+  </script>
+</head>
+<body class="flex flex-col justify-center items-center h-screen w-screen">
+<div class="left-area flex flex-col w-3/12">
+    <div class="text-div w-3/5">
+        <h1 class="text-7xl font-bold text-green-900">Transaction Successful</h1>
+    </div>
+    <div>
+        <form>
+            <button name ="ExitPage" onclick="closeWindow()" type="button" class = "mt-10 w-96 bg-white py-10 border-2 border-green-900 rounded-md shadow-sm font-medium hover:bg-gray-50">Exit Page</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

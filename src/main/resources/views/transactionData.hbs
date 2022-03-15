@@ -13,6 +13,19 @@
             $('#example').DataTable();
         } );
    </script>
+
+    <script type = "text/javascript">
+        function redirect(){
+        var windowsObjectReference = null;
+        var thisWindow = "http://localhost:8080/transactionData"
+        if(windowsObjectReference == null || windowsObjectReference.closed) {
+            var Val = document.getElementById("inputBox").value;
+            windowsObjectReference = window.open("http://localhost:8080/transactionData/?id=" + Val);
+        } else {
+            windowsObjectReference.focus();
+        };
+    }
+    </script>
 </head>
 <body>
    <table id="example" class="display" style="width:100%">
@@ -52,5 +65,9 @@
                </tr>
            </tfoot>
        </table>
+<form name = "Repeat">
+    <input type = "text" name = "id" id="inputBox" placeholder = "transaction id" value = "" >
+    <input type = "submit" value = "RepeatTransaction" onclick="redirect()" >
+</form>
 </body>
 </html>

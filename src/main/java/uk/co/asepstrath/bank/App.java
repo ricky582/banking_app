@@ -11,13 +11,13 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
-
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+
 @OpenAPIDefinition(
         info = @Info(
                 title = "your-bank",
@@ -31,6 +31,7 @@ import java.util.ArrayList;
         ),
         tags = @Tag(name = "Accounts")
 )
+
 public class App extends Jooby {
 
     {
