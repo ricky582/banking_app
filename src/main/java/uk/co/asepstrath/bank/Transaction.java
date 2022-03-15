@@ -1,7 +1,9 @@
 package uk.co.asepstrath.bank;
 
+
 import java.util.Objects;
-import java.util.Random;
+import java.security.SecureRandom;
+
 public class Transaction implements Comparable<Transaction> {
 
     private final Account withdrawAccount;  //Account to take funds from
@@ -78,7 +80,7 @@ public class Transaction implements Comparable<Transaction> {
         }
     }
 
-    //compareTo() now orders by timestamp so transactions can be applied in order of which they occured
+    //generates a new random id
     public String generateId() {
         int n1 = 7;
         int n2 = 4;
@@ -86,7 +88,7 @@ public class Transaction implements Comparable<Transaction> {
         int n4 = 4;
         int n5 = 12;
         String result = "";
-        String AlphaNumericString = "abcdefg"
+        String AlphaNumericString = "abcdefghijklmnopqrstuvwxyz"
                 + "0123456789";
         StringBuilder sb1 = new StringBuilder(n1);
         StringBuilder sb2 = new StringBuilder(n2);
@@ -94,8 +96,8 @@ public class Transaction implements Comparable<Transaction> {
         StringBuilder sb4 = new StringBuilder(n4);
         StringBuilder sb5 = new StringBuilder(n5);
 
-        Random rand = new Random();
-        int upperBound = 6;
+        SecureRandom rand = new SecureRandom();
+        int upperBound = 13;
         int randInt = rand.nextInt(upperBound);
 
         for (int i = 0; i < n1; i++) {
@@ -123,6 +125,7 @@ public class Transaction implements Comparable<Transaction> {
         return result;
     }
 
+    //compareTo() now orders by timestamp so transactions can be applied in order of which they occured
     @Override
     public int compareTo(Transaction o) {
         return this.timestamp.compareTo(o.timestamp);

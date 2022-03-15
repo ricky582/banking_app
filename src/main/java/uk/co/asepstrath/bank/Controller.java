@@ -305,7 +305,7 @@ public class Controller {
         }
         catch (SQLException e) {}
     }
-
+    //displays success page or error page based on the success of the transaction
     @GET("/transactionData/")
     public ModelAndView repeatSuccess(@QueryParam("id") String transactionid) {
         if (repeatTransaction(transactionid) == true) {
@@ -313,7 +313,7 @@ public class Controller {
         }
         return new ModelAndView("RepeatTransactionError.hbs");
     }
-
+    //repeats transaction from user inputted id
     public boolean repeatTransaction(String transactionid) {
         SimpleDateFormat newDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSS");
         Date newDate = new Date();
