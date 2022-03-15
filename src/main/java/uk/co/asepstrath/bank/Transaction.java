@@ -1,7 +1,5 @@
 package uk.co.asepstrath.bank;
 
-import java.util.Objects;
-
 public class Transaction implements Comparable<Transaction> {
 
     private final Account withdrawAccount;  //Account to take funds from
@@ -10,7 +8,7 @@ public class Transaction implements Comparable<Transaction> {
     private final String id;                //unique identifier for transaction
     private final double amount;            //amount of money to be moved
     private final String currency;          //string to represent currency (e.g "GBP")
-    private int status;                   //starts at 0, will switch to 1 if transactions is successful or -1 if it fails
+    private boolean done;                   //starts at false, switches to true once funds have been updated in BOTH accounts
 
     //constructor for transactions
     public Transaction(Account withdrawAccount, Account depositAccount, String timestamp, String id, double amount, String currency){
@@ -20,7 +18,7 @@ public class Transaction implements Comparable<Transaction> {
         this.id = id;
         this.amount = amount;
         this.currency = currency;
-        this.status = 0;
+        this.done = false;
     }
 
     //getter for withdrawAccount
@@ -41,47 +39,16 @@ public class Transaction implements Comparable<Transaction> {
     //getter for currency
     public String getCurrency(){return currency;}
 
-    //getter for status
-    public int getStatus(){return status;}
-
-    public String getDone(){
-        if (this.status == 0){
-            return "Incomplete";
-        }
-        else if (this.status == 1){
-            return "Done";
-        }
-        else {
-            return "Failed";
-        }
-    }
+    //getter for done
+    public boolean getDone(){return done;}
 
     //marks transaction as complete
-    public void setStatus(int s){
-        if(s <= 1 && s >=-1) {
-            status = s;
-        }
-    }
-
-    public void doTransaction(){
-        if (this.withdrawAccount.getLocal() && this.status == 0) {
-            if (withdrawAccount.getBalance() - amount >= 0) {
-                withdrawAccount.withdraw(amount);
-                depositAccount.deposit(amount);
-                status = 1;
-            }
-            else this.status = -1;
-        }
-        else if (status == 0){
-            depositAccount.deposit(amount);
-            this.status = 1;
-        }
-    }
+    public void finished(){done = true;}
 
     //compareTo() now orders by timestamp so transactions can be applied in order of which they occured
     @Override
     public int compareTo(Transaction o) {
         return this.timestamp.compareTo(o.timestamp);
     }
-
+    
 }
