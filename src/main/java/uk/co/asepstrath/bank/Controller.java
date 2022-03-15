@@ -226,7 +226,6 @@ public class Controller {
             if (!rs.next()){
                 return new Account(id);
             }
-            id = rs.getString("id");
             String name = rs.getString("name");
             double balance = rs.getDouble("balance");
             String accountType = rs.getString("accountType");
