@@ -7,12 +7,15 @@ public class Account {
     private String id;              //unique ID for account
     private String accountType;     //string to represent account type (e.g "Investment Account")
     private String currency;        //string to represent currency (e.g "GBP")
-    private final boolean localAcc; //represents whether account is in bank or not
+    private final boolean localAcc; /* represents whether account is in bank or not - if an account
+                                       is non-local we assume it has the funds to make any transaction */
+    private final double initialBal;//balance when account is first added to DataBase
 
     //simple account constructor mainly used for testing
     public Account(String n, double amount) {
         this.name = n;
         this.balance = amount;
+        this.initialBal = amount;
         this.localAcc = true;
     }
 
@@ -21,6 +24,7 @@ public class Account {
         this.id = id;
         this.name = name;
         this.balance = balance;
+        this.initialBal = balance;
         this.accountType = accountType;
         this.currency = currency;
         this.localAcc = true;
@@ -30,6 +34,7 @@ public class Account {
     public Account(String id){
         this.id = id;
         this.localAcc = false;
+        this.initialBal = -1; //non-local accounts are never stored in the database, so we hard code balance to -1
     }
 
     //better formatted toString function
@@ -51,10 +56,19 @@ public class Account {
         balance -= amount;
     }
 
+    public double getInitialBal() {
+        return initialBal;
+    }
+
     //balance getter
     public double getBalance() {
         if(localAcc) return Math.round(balance*100.00)/100.00;
         else return -1;
+    }
+
+    //balance setter
+    public void setBalance(double bal){
+        balance = bal;
     }
 
     //name getter
