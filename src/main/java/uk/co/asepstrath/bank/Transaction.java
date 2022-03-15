@@ -1,5 +1,5 @@
 package uk.co.asepstrath.bank;
-import java.util.Random;
+import java.security.SecureRandom;
 public class Transaction implements Comparable<Transaction> {
 
     private Account withdrawAccount;
@@ -36,6 +36,7 @@ public class Transaction implements Comparable<Transaction> {
 
     public void finished(){done = true;}
 
+    // generates a new id
     public String generateId() {
         int n1 = 7;
         int n2 = 4;
@@ -51,8 +52,8 @@ public class Transaction implements Comparable<Transaction> {
         StringBuilder sb4 = new StringBuilder(n4);
         StringBuilder sb5 = new StringBuilder(n5);
 
-        Random rand = new Random();
-        int upperBound = 6;
+        SecureRandom rand = new SecureRandom();
+        int upperBound = 13;
         int randInt = rand.nextInt(upperBound);
 
         for (int i = 0; i < n1; i++) {
