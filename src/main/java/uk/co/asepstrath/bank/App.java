@@ -137,6 +137,7 @@ public class App extends Jooby {
         } catch (SQLException e) {
             log.error("Database Creation Error", e);
         }
+        control1.removeFraudulentTransactions();
     }
 
     public void onStop() {

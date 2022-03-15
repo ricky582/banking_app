@@ -2,7 +2,6 @@ package uk.co.asepstrath.bank;
 
 
 import io.jooby.ModelAndView;
-import io.jooby.Jooby;
 import io.jooby.annotations.GET;
 import io.jooby.annotations.Path;
 import io.swagger.v3.oas.annotations.Operation;
@@ -57,8 +56,9 @@ public class Controller {
             summary = "Display All Accounts",
             description = "Display all accounts in the bank collection, kept on a table of ten which is scrollable/searchable"
     )
+
     public ModelAndView accountsData() {
-        applyTransactions(retrieveDataTransaction());
+        retrieveDataTransaction();
         ArrayList<Account> arrayListAccount = retrieveData();
         Map<String, Object> mapTest = new HashMap<>();
         mapTest.put("accounts", "accounts");
@@ -66,19 +66,19 @@ public class Controller {
         return new ModelAndView("accountsData.hbs", mapTest);
     }
 
-    //gets data from Swagger
+    //gets all accounts data from swagger and calls a parsing method
     public ArrayList<Account> fetchData() {
-        String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/Team1/accounts")
+        String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/Team1/accounts") //get request for all accounts data
                 .asJson()
                 .getBody());
         return parseJson(jsonResult);
     }
 
-    //parses json data for accounts into a list of accounts
+    //parses json data for accounts into a list of accounts and returns accounts
     public ArrayList<Account> parseJson(String responseBody) {
-        ArrayList<Account> accounts = new ArrayList<>();
-        JSONArray accountsData = new JSONArray(responseBody);
-        for (int i = 0; i < accountsData.length(); i++) {
+        ArrayList<Account> accounts = new ArrayList<>();    //array list to store accounts
+        JSONArray accountsData = new JSONArray(responseBody);   //adds account data from parameter to a JSON array
+        for (int i = 0; i < accountsData.length(); i++) {       //adds account data from JSON array to an Array of objects (Accounts)
             JSONObject accountData = accountsData.getJSONObject(i);
             accounts.add(new Account(accountData.getString("id"),
                                      accountData.getString("name"),
@@ -92,20 +92,20 @@ public class Controller {
     //retrieve accounts from database created in App
     public ArrayList<Account> retrieveData() {
         ArrayList<Account> accounts = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection()) {
-            Statement stmt = connection.createStatement();
-            String sql = "SELECT * FROM accounts";
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()) {
+        try (Connection connection = dataSource.getConnection()) { //creates connection to database
+            Statement stmt = connection.createStatement();  //creates statement object
+            String sql = "SELECT * FROM accounts";  //query search for all data of accounts
+            ResultSet rs = stmt.executeQuery(sql);  //creates result object of executed query results
+            while (rs.next()) {     //assigns each piece of data to its corresponding data type
                 String id = rs.getString("id");
                 String name = rs.getString("name");
                 double balance = rs.getDouble("balance");
                 String accountType = rs.getString("accountType");
                 String currency = rs.getString("currency");
                 double initialBal = rs.getDouble("initialBal");
-                Account bankUser = new Account(id, name, initialBal, accountType, currency);
+                Account bankUser = new Account(id, name, initialBal, accountType, currency);//assigns all data to one account
                 bankUser.setBalance(balance);
-                accounts.add(bankUser);
+                accounts.add(bankUser);//adds each account to account arrayList
             }
             rs.close();
         } catch (SQLException e) {}
@@ -126,7 +126,6 @@ public class Controller {
             description = "Display all transactions in the bank collection, kept on a table of ten which is scrollable/searchable"
     )
     public ModelAndView transactionData() {
-        applyTransactions(retrieveDataTransaction());
         ArrayList<Transaction> arrayListTransaction = retrieveDataTransaction();
         Map<String, Object> mapTest = new HashMap<>();
         mapTest.put("transaction", "transaction");
@@ -134,9 +133,9 @@ public class Controller {
         return new ModelAndView("transactionData.hbs", mapTest);
     }
 
-    //gets transaction data from Swagger
+    //gets all transaction data from Swagger and calls a parsing method for this data
     public ArrayList<Transaction> fetchDataTransaction() {
-        String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/team1/transactions?PageSize=10000")
+        String jsonResult = String.valueOf(Unirest.get("https://api.asep-strath.co.uk/api/team1/transactions?PageSize=10000")//get request for all transaction data
                 .asJson()
                 .getBody());
         return parseJsonTransaction(jsonResult);
@@ -144,20 +143,17 @@ public class Controller {
 
     //parses transaction data into transaction objects
     public ArrayList<Transaction> parseJsonTransaction(String responseBody) {
-        ArrayList<Transaction> transactions = new ArrayList<>();
-        JSONArray transactionsData = new JSONArray(responseBody);
-        ArrayList<String> fraud;
-        fraud = fraudData();
+        ArrayList<Transaction> transactions = new ArrayList<>();    //arraylist to store each transaction
+        JSONArray transactionsData = new JSONArray(responseBody);   //storing all transaction in a JSON Array
         for (int i = 0; i < transactionsData.length(); i++) {
             JSONObject accountData = transactionsData.getJSONObject(i);
-           if(!fraud.contains(accountData.getString("id"))) { //filters out fraudulent transactions
-               transactions.add(new Transaction(getAccountById(accountData.getString("withdrawAccount")),
-                       getAccountById(accountData.getString("depositAccount")),
-                       accountData.getString("timestamp"),
-                       accountData.getString("id"),
-                       accountData.getDouble("amount"),
-                       accountData.getString("currency")));
-           }
+            transactions.add(new Transaction(getAccountById(accountData.getString("withdrawAccount")),
+                    getAccountById(accountData.getString("depositAccount")),
+                    accountData.getString("timestamp"),
+                    accountData.getString("id"),
+                    accountData.getDouble("amount"),
+                    accountData.getString("currency")));   //stores each transaction to transactions arrayList
+
         }
         return transactions;
     }
@@ -165,11 +161,11 @@ public class Controller {
     //retrieve transactions from database created in App
     public ArrayList<Transaction> retrieveDataTransaction() {
         ArrayList<Transaction> transactions = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection()) {
-            Statement stmt = connection.createStatement();
-            String sql = "SELECT * FROM transactions";
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()) {
+        try (Connection connection = dataSource.getConnection()) { //creates connection to database
+            Statement stmt = connection.createStatement(); //creates statement object
+            String sql = "SELECT * FROM transactions";  //query search for all data of transactions
+            ResultSet rs = stmt.executeQuery(sql);  //creates result object of executed query results
+            while (rs.next()) { //assigns each piece of data to its corresponding data type
                 String withdrawAccount = rs.getString("withdrawAccount");
                 String depositAccount = rs.getString("depositAccount");
                 String timestamp = rs.getString("timestamp");
@@ -178,21 +174,21 @@ public class Controller {
                 String currency = rs.getString("currency");
                 Transaction bankTransaction = new Transaction(getAccountById(withdrawAccount),
                                                               getAccountById(depositAccount),
-                                                              timestamp, id, amount, currency);
+                                                              timestamp, id, amount, currency); //assigns all data to one transaction
                 bankTransaction.setStatus(rs.getInt("status"));
-                transactions.add(bankTransaction);
+                transactions.add(bankTransaction);  //adds each account to account arrayList
             }
             rs.close();
         } catch (SQLException e) {}
-
+        applyTransactions(transactions);
         return transactions;
     }
 
     public void applyTransactions(ArrayList<Transaction> arr) {
         try {
-            Connection connection = dataSource.getConnection();
-            Collections.sort(arr);
-            for (Transaction t : arr) {
+            Connection connection = dataSource.getConnection(); //connect to DB
+            Collections.sort(arr); //make sure transactions are sorted chronologically
+            for (Transaction t : arr) { //
                 if (t.getStatus() == 0) {
                     Account dep = getAccountById(t.getDepAcc().getID());
                     Account wid = getAccountById(t.getWidAcc().getID());
@@ -256,10 +252,13 @@ public class Controller {
     )
     public ModelAndView transactionDataAcc() {
         ArrayList<TransactionInfo> arrayListTransactionAcc = retrieveDataTransactionAcc();
+        ArrayList<Transaction> arr = retrieveDataTransaction();
         Map<String, Object> mapTest = new HashMap<>();
         int totalSuccessful = 0;
-        for (TransactionInfo t : arrayListTransactionAcc){
-            totalSuccessful += t.getNumSuccessful();
+        for (Transaction t : arr){
+            if (t.getStatus() == 1){
+                totalSuccessful ++;
+            }
         }
         mapTest.put("transaction", "transaction");
         mapTest.put("user", arrayListTransactionAcc); //users show in hbs file
@@ -284,22 +283,20 @@ public class Controller {
         return transactionInfo;
     }
 
-    //gets fraud data from Swagger
-    public ArrayList<String> fraudData() {
+    //gets fraud data from Swagger and removes all transactions with matching IDs
+    public void removeFraudulentTransactions() {
         String jsonResult = String.valueOf(Unirest.get("http://api.asep-strath.co.uk/api/Team1/fraud")
-                .header("accept", "application/json")
+                .header("accept", "application/json") // get request returns data in xml thus .header returns data in a JSON format
                 .asJson()
                 .getBody());
-        return parseJsonId(jsonResult);
-    }
-
-    //parses fraud data to string
-    public ArrayList<String> parseJsonId(String responseBody) {
-        ArrayList<String> fraudId = new ArrayList<>();
-        JSONArray jFraudID = new JSONArray(responseBody);
-        for (int i = 0; i < jFraudID.length(); i++) {
-            fraudId.add(jFraudID.getString(i));
+        JSONArray jFraudID = new JSONArray(jsonResult);
+        try (Connection connection = dataSource.getConnection()){ //deletes fraudulent transactions
+            for (int i = 0; i < jFraudID.length(); i++) {
+                PreparedStatement prep = connection.prepareStatement("DELETE FROM transactions WHERE id = ?;");
+                prep.setString(1, jFraudID.getString(i));
+                prep.executeUpdate();
+            }
         }
-        return fraudId;
+        catch (SQLException e) {}
     }
 }
