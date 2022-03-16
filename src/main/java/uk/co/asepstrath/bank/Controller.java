@@ -335,7 +335,7 @@ public class Controller {
                     prep.setString(4, tranList.get(i).generateId());
                     prep.setDouble(5, tranList.get(i).getAmount());
                     prep.setString(6, tranList.get(i).getCurrency());
-                    prep.setInt(7, tranList.get(i).getStatus());
+                    prep.setInt(7, 0);
 
                     prep.executeUpdate();
 
