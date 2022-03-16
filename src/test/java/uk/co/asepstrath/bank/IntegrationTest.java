@@ -17,25 +17,6 @@ class IntegrationTest {
     static OkHttpClient client = new OkHttpClient();
 
     @Test
-    void testStatusCode(int serverPort) throws IOException {
-        Request req = new Request.Builder().url("http://localhost:" + serverPort + "/").build();
-        Response rsp = client.newCall(req).execute();
-        assertEquals(StatusCode.OK.value(), rsp.code());
-        
-        req = new Request.Builder().url("http://localhost:" + serverPort + "/accountsData").build();
-        rsp = client.newCall(req).execute();
-        assertEquals(StatusCode.OK.value(), rsp.code());
-
-        req = new Request.Builder().url("http://localhost:" + serverPort + "/transactionData").build();
-        rsp = client.newCall(req).execute();
-        assertEquals(StatusCode.OK.value(), rsp.code());
-
-        req = new Request.Builder().url("http://localhost:" + serverPort + "/transactionData/byAccount").build();
-        rsp = client.newCall(req).execute();
-        assertEquals(StatusCode.OK.value(), rsp.code());
-    }
-
-    @Test
     void index() {
         MockRouter router = new MockRouter(new App());
         MockContext context = new MockContext();
