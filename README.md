@@ -8,7 +8,7 @@ A group project from my 2nd year studies as part of my course CS217: Agile Softw
     1. Clone the repository
     2. Run the following in the command prompt of your choice:
         ./mvnw.cmd clean jooby:run
-       Alternatively, on IntelliJ, you can navigate to Maven, open asep-bank/Plugins/jooby/jooby:run
+Alternatively, on IntelliJ, you can navigate to Maven, open asep-bank/Plugins/jooby/jooby:run
        
 ## Building
     ./mvnw.cmd clean package
