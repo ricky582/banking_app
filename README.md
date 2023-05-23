@@ -2,7 +2,7 @@
 A mock banking app, writtin in Java
 
 ## Inspiration
-    A group project from my 2nd year studies as part of my course CS217: Agile Software Engineering in Practice. Created from a set of [user stories](https://github.com/ricky582/banking_app/blob/master/UserStories.pdf) provided by the lab leaders. Tests were done in JUnit, and the UI was made using Jooby and Handlebars
+A group project from my 2nd year studies as part of my course CS217: Agile Software Engineering in Practice. Created from a set of [user stories](https://github.com/ricky582/banking_app/blob/master/UserStories.pdf) provided by the lab leaders. Tests were done in JUnit, and the UI was made using Jooby and Handlebars
 
 ## Installation 
     1. Clone the repository
@@ -14,5 +14,5 @@ A mock banking app, writtin in Java
     Tests can be found in src/test/java/uk/co/asepstrath/bank
 
 ## Building
-        ./mvnw.cmd clean package
+    ./mvnw.cmd clean package
 
